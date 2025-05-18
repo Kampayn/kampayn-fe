@@ -22,6 +22,11 @@ const router = createRouter({
       component: RegisterView,
     },
     {
+      path: '/choose-account-type',
+      name: 'choose-account-type',
+      component: () => import('../views/ChooseAccountTypeView.vue'),
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
