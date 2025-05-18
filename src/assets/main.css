@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -49,7 +49,7 @@
   --card-foreground: #252525;
   --popover: #ffffff;
   --popover-foreground: #252525;
-  --primary: #57A99A;
+  --primary: #57a99a;
   --primary-foreground: #fbfbfb;
   --secondary: #f7f7f7;
   --secondary-foreground: #343434;
@@ -61,7 +61,7 @@
   --destructive-foreground: #d14124;
   --border: #ebebeb;
   --input: #ebebeb;
-  --ring: #b4b4b4;
+  --ring: #57a99a;
   --chart-1: #d35f1c;
   --chart-2: #3a9bc7;
   --chart-3: #3a5daf;
