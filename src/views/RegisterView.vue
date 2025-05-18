@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Lock, Mail } from 'lucide-vue-next'
+import { Lock, Mail, UserRound } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
@@ -10,10 +10,17 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
 const formSchema = toTypedSchema(
-  z.object({
-    email: z.string().email(),
-    password: z.string().min(8),
-  }),
+  z
+    .object({
+      username: z.string().min(4).max(20),
+      email: z.string().email(),
+      password: z.string().min(8),
+      confirmPassword: z.string().min(8),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords don't match",
+      path: ['confirmPassword'],
+    }),
 )
 
 const { handleSubmit } = useForm({
@@ -40,9 +47,20 @@ const onSubmit = handleSubmit((values) => {
 
   <main class="flex flex-col items-center justify-center p-6 h-[calc(100dvh-73px)]">
     <div class="w-full max-w-md border border-gray-100 rounded-md p-8">
-      <h1 class="text-2xl font-medium text-center mb-8">Log in</h1>
+      <h1 class="text-2xl font-medium text-center mb-8">Register</h1>
 
       <form @submit.prevent="onSubmit" class="space-y-6">
+        <FormField v-slot="{ componentField }" name="username">
+          <FormItem>
+            <FormControl>
+              <Input type="text" placeholder="Username" is-icon v-bind="componentField">
+                <UserRound class="size-5 text-muted-foreground" />
+              </Input>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
+
         <FormField v-slot="{ componentField }" name="email">
           <FormItem>
             <FormControl>
@@ -77,14 +95,24 @@ const onSubmit = handleSubmit((values) => {
           </FormItem>
         </FormField>
 
-        <!-- Forgot password -->
-        <div class="flex justify-end">
-          <RouterLink to="/forgot-password" class="text-sm text-gray-600 hover:text-teal-600">
-            Lupa password?
-          </RouterLink>
-        </div>
+        <FormField v-slot="{ componentField }" name="confirmPassword">
+          <FormItem>
+            <FormControl>
+              <Input
+                type="password"
+                placeholder="Confirm Password"
+                autocomplete="current-password"
+                is-icon
+                v-bind="componentField"
+              >
+                <Lock class="size-5 text-muted-foreground" />
+              </Input>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        </FormField>
 
-        <Button type="submit" size="lg" class="w-full">Masuk</Button>
+        <Button type="submit" size="lg" class="w-full">Buat Akun</Button>
       </form>
 
       <!-- Divider -->
@@ -102,9 +130,9 @@ const onSubmit = handleSubmit((values) => {
       <!-- Register link -->
       <div class="mt-6 text-center">
         <p class="text-sm text-gray-600">
-          Belum punya akun?
-          <RouterLink to="/register" class="text-teal-600 hover:underline font-medium">
-            Daftar Akun
+          Sudah punya akun?
+          <RouterLink to="/login" class="text-teal-600 hover:underline font-medium">
+            Masuk Sekarang
           </RouterLink>
         </p>
       </div>
