@@ -8,6 +8,7 @@ import * as z from 'zod'
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import KHeader from '@/components/KHeader.vue'
 
 const formSchema = toTypedSchema(
   z.object({
@@ -26,19 +27,9 @@ const onSubmit = handleSubmit((values) => {
 </script>
 
 <template>
-  <header class="border-b border-gray-100 py-4 px-6">
-    <div class="max-w-7xl mx-auto w-full">
-      <img
-        src="/assets/logo/logo.svg"
-        alt="Kampaiyn Logo"
-        width="150"
-        height="40"
-        class="h-10 w-auto"
-      />
-    </div>
-  </header>
+  <KHeader variant="outline" />
 
-  <main class="flex flex-col items-center justify-center p-6 h-[calc(100dvh-73px)]">
+  <main class="flex flex-col items-center justify-center mt-[72px] p-6 h-[calc(100dvh-73px)]">
     <div class="w-full max-w-md border border-gray-100 rounded-md p-8">
       <h1 class="text-2xl font-medium text-center mb-8">Log in</h1>
 
