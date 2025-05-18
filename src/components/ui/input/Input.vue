@@ -65,19 +65,19 @@ const baseInputClasses = [
   'dark:bg-input/30 border-input',
   'flex h-10 w-full min-w-0 rounded-md border bg-transparent text-base shadow-xs',
   'transition-[color,box-shadow] outline-none',
-  
+
   // File input styling
   'file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium',
-  
+
   // Disabled state
   'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
-  
+
   // Responsive text size
   'md:text-sm',
-  
+
   // Focus states
   'focus-visible:border-ring focus-visible:ring-ring focus-visible:ring-2',
-  
+
   // Invalid states
   'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
 ]
@@ -87,49 +87,33 @@ const paddingClasses = computed(() => {
   if (!props.isIcon) {
     return 'px-3 py-1'
   }
-  
+
   const basePadding = 'py-1'
   const leftPadding = props.iconPosition === 'left' ? 'pl-10 pr-3' : 'pl-3'
   const rightPadding = props.iconPosition === 'right' ? 'pr-10' : ''
-  
+
   return `${basePadding} ${leftPadding} ${rightPadding}`.trim()
 })
 
 // Complete input classes
-const inputClasses = computed(() => cn(
-  baseInputClasses,
-  paddingClasses.value,
-  props.class
-))
+const inputClasses = computed(() => cn(baseInputClasses, paddingClasses.value, props.class))
 
 // Icon container classes
-const iconClasses = computed(() => cn(
-  'absolute inset-y-0 flex items-center justify-center px-2',
-  {
+const iconClasses = computed(() =>
+  cn('absolute inset-y-0 flex items-center justify-center px-2', {
     'left-0': props.iconPosition === 'left',
     'right-0': props.iconPosition === 'right',
-  }
-))
+  }),
+)
 </script>
 
 <template>
   <div v-if="isIcon" class="relative w-full">
-    <input
-      v-bind="inputAttrs"
-      v-model="modelValue"
-      data-slot="input"
-      :class="inputClasses"
-    />
+    <input v-bind="inputAttrs" v-model="modelValue" data-slot="input" :class="inputClasses" />
     <span :class="iconClasses">
       <slot />
     </span>
   </div>
-  
-  <input
-    v-else
-    v-bind="inputAttrs"
-    v-model="modelValue"
-    data-slot="input"
-    :class="inputClasses"
-  />
+
+  <input v-else v-bind="inputAttrs" v-model="modelValue" data-slot="input" :class="inputClasses" />
 </template>

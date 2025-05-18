@@ -38,9 +38,7 @@ import { Button } from '@/components/ui/button'
           <SearchIcon class="h-5 w-5" />
         </button>
         <RouterLink to="/login">
-          <Button variant="outline">
-            Masuk
-          </Button>
+          <Button variant="outline"> Masuk </Button>
         </RouterLink>
         <RouterLink to="/register">
           <Button>Daftar</Button>
@@ -59,9 +57,7 @@ import { Button } from '@/components/ui/button'
             <p class="text-lg text-gray-600">
               Solusi cerdas untuk mempertemukan kreativitas dan strategi pemasaran
             </p>
-            <Button>
-              Gabung Sekarang
-            </Button>
+            <Button> Gabung Sekarang </Button>
           </div>
           <div class="relative h-[300px] md:h-[400px]">
             <img
