@@ -28,8 +28,13 @@ const router = createRouter({
     },
     {
       path: '/brand-register',
-      name: 'create-account',
+      name: 'brand-register',
       component: () => import('../views/BrandRegisterView.vue'),
+    },
+    {
+      path: '/influencer-register',
+      name: 'influencer-register',
+      component: () => import('../views/InfluencerRegisterView.vue'),
     },
     {
       path: '/about',
