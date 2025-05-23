@@ -3,13 +3,7 @@ import { ref, computed, watch, type Ref } from 'vue'
 import { useForm } from 'vee-validate'
 import { z } from 'zod'
 import { toTypedSchema } from '@vee-validate/zod'
-import {
-  CalendarDate,
-  DateFormatter,
-  type DateValue,
-  getLocalTimeZone,
-  today,
-} from '@internationalized/date'
+import { DateFormatter, getLocalTimeZone, today } from '@internationalized/date'
 import { CalendarDays, Loader2 } from 'lucide-vue-next'
 import type { DateRange } from 'reka-ui'
 
