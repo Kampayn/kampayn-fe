@@ -3,6 +3,9 @@ import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import VerifyEmail from '@/views/VerifyEmail.vue'
+import DashboardView from '@/views/DashboardView.vue'
+import CreateCampaignView from '@/views/CreateCampaignView.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,6 +44,16 @@ const router = createRouter({
       path: '/influencer-register',
       name: 'influencer-register',
       component: () => import('../views/InfluencerRegisterView.vue'),
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: DashboardView,
+    },
+    {
+      path: '/create-campaign',
+      name: 'create-campaign',
+      component: CreateCampaignView,
     },
     {
       path: '/about',
