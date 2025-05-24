@@ -5,6 +5,7 @@ import RegisterView from '@/views/RegisterView.vue'
 import VerifyEmail from '@/views/VerifyEmail.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import CreateCampaignView from '@/views/CreateCampaignView.vue'
+import InfluencerRecommendation from '@/views/InfluencerRecommendation.vue'
 
 
 const router = createRouter({
@@ -54,6 +55,11 @@ const router = createRouter({
       path: '/create-campaign',
       name: 'create-campaign',
       component: CreateCampaignView,
+    },
+    {
+      path: '/influencer-recommendation',
+      name: 'influencer-recommendation',
+      component: InfluencerRecommendation,
     },
     {
       path: '/about',
