@@ -1,9 +1,10 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import CreateCampaignView from '@/views/CreateCampaignView.vue'
+import DashboardView from '@/views/DashboardView.vue'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
-import DashboardView from '@/views/DashboardView.vue'
-import CreateCampaignView from '@/views/CreateCampaignView.vue'
+import TaskListInfluencer from '@/views/TaskListInfluencerView.vue'
+import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -47,6 +48,11 @@ const router = createRouter({
       path: '/create-campaign',
       name: 'create-campaign',
       component: CreateCampaignView,
+    },
+    {
+      path: '/task-list-influencer',
+      name: 'task-list-influencer',
+      component: TaskListInfluencer,
     },
     {
       path: '/about',
