@@ -1,29 +1,111 @@
 <script setup lang="ts">
-import { Lock, Mail } from 'lucide-vue-next'
+import { LoaderCircle, Lock, Mail } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
+import { useFirebaseAuth } from 'vuefire'
+import { GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from 'firebase/auth'
+import { toast } from 'vue-sonner'
+import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import KHeader from '@/components/KHeader.vue'
 
+const auth = useFirebaseAuth()
+const router = useRouter()
+const googleAuthProvider = new GoogleAuthProvider()
+
+const isLoading = ref(false)
+const isGoogleLoading = ref(false)
+
 const formSchema = toTypedSchema(
   z.object({
-    email: z.string().email(),
-    password: z.string().min(8),
+    email: z.string().email('Email tidak valid'),
+    password: z.string().min(8, 'Password minimal 8 karakter'),
   }),
 )
 
-const { handleSubmit } = useForm({
+const { isFieldDirty, handleSubmit, meta } = useForm({
   validationSchema: formSchema,
 })
 
-const onSubmit = handleSubmit((values) => {
-  console.log('Form submitted!', values)
+const handleGoogleSignIn = async () => {
+  isGoogleLoading.value = true
+
+  try {
+    if (!auth) throw new Error('Firebase auth is not initialized')
+
+    const result = await signInWithPopup(auth, googleAuthProvider)
+    
+    // Get ID token for backend validation
+    const idToken = await result.user.getIdToken()
+    console.log('Google ID Token:', idToken)
+    
+    // Optional: Send token to your backend for validation
+    // await validateTokenWithBackend(idToken)
+    
+    toast.success('Berhasil login dengan Google')
+    router.push('/dashboard') // or wherever you want to redirect
+  } catch (error) {
+    toast.error('Gagal login dengan Google')
+    console.error('Google login failed:', error)
+  } finally {
+    isGoogleLoading.value = false
+  }
+}
+
+const onSubmit = handleSubmit(async (values) => {
+  isLoading.value = true
+
+  try {
+    if (!auth) throw new Error('Firebase auth is not initialized')
+
+    const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password)
+    
+    // Get ID token for backend validation
+    const idToken = await userCredential.user.getIdToken()
+    console.log('Email/Password ID Token:', idToken)
+    
+    // Optional: Send token to your backend for validation
+    // await validateTokenWithBackend(idToken)
+    
+    toast.success('Berhasil login')
+    router.push('/dashboard') // or wherever you want to redirect
+  } catch (error) {
+    toast.error('Gagal login')
+    console.error('Email/Password sign in error:', error)
+  } finally {
+    isLoading.value = false
+  }
 })
+
+// Optional: Function to validate token with your backend
+// const validateTokenWithBackend = async (idToken: string) => {
+//   try {
+//     const response = await fetch('http://localhost:3000/api/auth/validate', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${idToken}`
+//       }
+//     })
+    
+//     if (!response.ok) {
+//       throw new Error('Backend validation failed')
+//     }
+    
+//     const data = await response.json()
+//     console.log('Backend validation success:', data)
+//     return data
+//   } catch (error) {
+//     console.error('Backend validation error:', error)
+//     throw error
+//   }
+// }
 </script>
 
 <template>
@@ -34,7 +116,7 @@ const onSubmit = handleSubmit((values) => {
       <h1 class="text-2xl font-medium text-center mb-8">Log in</h1>
 
       <form @submit.prevent="onSubmit" class="space-y-6">
-        <FormField v-slot="{ componentField }" name="email">
+        <FormField v-slot="{ componentField }" name="email" :validate-on-blur="!isFieldDirty">
           <FormItem>
             <FormControl>
               <Input
@@ -51,7 +133,7 @@ const onSubmit = handleSubmit((values) => {
           </FormItem>
         </FormField>
 
-        <FormField v-slot="{ componentField }" name="password">
+        <FormField v-slot="{ componentField }" name="password" :validate-on-blur="!isFieldDirty">
           <FormItem>
             <FormControl>
               <Input
@@ -75,7 +157,15 @@ const onSubmit = handleSubmit((values) => {
           </RouterLink>
         </div>
 
-        <Button type="submit" size="lg" class="w-full">Masuk</Button>
+        <Button 
+          type="submit" 
+          size="lg" 
+          :disabled="!meta.valid || isLoading || isGoogleLoading" 
+          class="w-full"
+        >
+          <LoaderCircle v-if="isLoading" class="animate-spin size-5 mr-2" />
+          <template v-else>Masuk</template>
+        </Button>
       </form>
 
       <!-- Divider -->
@@ -85,9 +175,18 @@ const onSubmit = handleSubmit((values) => {
         <div class="flex-1 border-t border-border"></div>
       </div>
 
-      <Button variant="outline" size="lg" class="w-full">
-        <img src="/assets/logo/google.svg" alt="Google Logo" width="20" height="20" />
-        Masuk dengan Google
+      <Button
+        @click="handleGoogleSignIn"
+        variant="outline"
+        size="lg"
+        :disabled="isLoading || isGoogleLoading"
+        class="w-full"
+      >
+        <LoaderCircle v-if="isGoogleLoading" class="animate-spin size-5 mr-2" />
+        <template v-else>
+          <img src="/assets/logo/google.svg" alt="Google Logo" width="20" height="20" class="mr-2" />
+          Masuk dengan Google
+        </template>
       </Button>
 
       <!-- Register link -->
