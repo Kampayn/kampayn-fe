@@ -54,14 +54,19 @@ const router = createRouter({
       component: DashboardView,
     },
     {
-      path: '/create-campaign',
-      name: 'create-campaign',
+      path: '/create',
+      name: 'create',
       component: CreateCampaignView,
     },
     {
       path: '/influencer-recommendation',
       name: 'influencer-recommendation',
       component: InfluencerRecommendation,
+    },
+    {
+      path: '/:id',
+      name: 'detail',
+      component: () => import('../views/DetailCampaignView.vue'),
     },
     {
       path: '/task-list-influencer',

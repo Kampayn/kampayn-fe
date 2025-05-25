@@ -255,7 +255,7 @@ watch([totalProfit, totalCustomer, totalCost], () => {
     <!-- Header & Back Button -->
     <div class="mb-8 flex items-start md:items-center gap-4">
       <RouterLink
-        to="/campaigns"
+        to="/dashboard"
         class="mt-1 text-gray-600 hover:text-gray-900 transition-colors flex items-center"
       >
         <ArrowLeft class="h-5 w-5" />

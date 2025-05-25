@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 
 import KHeader from '@/components/KHeader.vue'
-import { ChevronDown, Filter } from 'lucide-vue-next'
+import { ChevronDown, Filter, Plus } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -76,13 +76,18 @@ const newCampaigns = ref<number[]>([1, 2, 3, 4, 5, 6])
     <section>
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-2xl font-semibold">New Campaigns</h2>
-        <Button variant="outline" class="bg-green-50 border-green-100 text-gray-800 gap-2">
-          <Filter class="h-4 w-4" /> Filter
+        <Button as-child>
+          <RouterLink to="/create"> Create Campaign <Plus class="h-4 w-4" /> </RouterLink>
         </Button>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card v-for="item in newCampaigns" :key="item" class="overflow-hidden">
+        <Card
+          v-for="item in newCampaigns"
+          :key="item"
+          @click="$router.push({ name: 'detail', params: { id: item } })"
+          class="overflow-hidden cursor-pointer"
+        >
           <div class="bg-gray-100 h-48 flex items-center justify-center text-gray-400">Pict</div>
           <div class="p-4">
             <h3 class="font-semibold mb-1">Kacang Tanah</h3>
