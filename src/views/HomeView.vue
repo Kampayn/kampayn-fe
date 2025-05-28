@@ -4,6 +4,8 @@ import { Facebook as FacebookIcon, Instagram as InstagramIcon } from 'lucide-vue
 import { Button } from '@/components/ui/button'
 import KHeader from '@/components/KHeader.vue'
 import KFooter from '@/components/KFooter.vue'
+import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 </script>
 
 <template>
@@ -22,12 +24,13 @@ import KFooter from '@/components/KFooter.vue'
       <div class="grid md:grid-cols-2 gap-8 items-center">
         <div class="space-y-6">
           <h1 class="text-4xl md:text-5xl font-bold leading-tight text-gray-900">
-            Solusi Digital Untuk Kebutuhan Bisnismu
+            Scale your business with intelligent insights
           </h1>
           <p class="text-lg text-gray-600">
-            Solusi cerdas untuk mempertemukan kreativitas dan strategi pemasaran
+            Growth your business with with our AI-powered platform. Make smarter decisions and grow
+            faster than ever before.
           </p>
-          <Button> Gabung Sekarang </Button>
+          <Button size="lg">Gabung Sekarang</Button>
         </div>
         <div class="relative h-[300px] md:h-[400px]">
           <img
@@ -39,29 +42,75 @@ import KFooter from '@/components/KFooter.vue'
       </div>
     </section>
 
-    <!-- Categories Section -->
-    <section class="bg-[#f0f5f5] py-16">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold text-center mb-12">Kategori Layanan Kami</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="bg-white p-8 rounded-lg shadow-sm text-center">
-            <h3 class="text-xl font-semibold">Kesehatan</h3>
-          </div>
-          <div class="bg-white p-8 rounded-lg shadow-sm text-center">
-            <h3 class="text-xl font-semibold">Kuliner</h3>
-          </div>
-          <div class="bg-white p-8 rounded-lg shadow-sm text-center">
-            <h3 class="text-xl font-semibold">Kecantikan</h3>
-          </div>
-          <div class="bg-white p-8 rounded-lg shadow-sm text-center">
-            <h3 class="text-xl font-semibold">Lorem</h3>
-          </div>
-          <div class="bg-white p-8 rounded-lg shadow-sm text-center">
-            <h3 class="text-xl font-semibold">Lorem</h3>
-          </div>
-          <div class="bg-white p-8 rounded-lg shadow-sm text-center">
-            <h3 class="text-xl font-semibold">Lorem</h3>
-          </div>
+    <section id="features" class="py-24 bg-primary/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center space-y-4 mb-16">
+          <h2 class="text-4xl font-bold text-gray-900">Why everyone choose Kampaiyn</h2>
+          <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+            Built for modern workflow to move fast and make data-driven decisions.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <Card
+            class="bg-white border-0 shadow-lg rounded-3xl p-8 hover:shadow-xl transition-shadow"
+          >
+            <CardContent class="p-0 space-y-6">
+              <div
+                class="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-500 rounded-2xl flex items-center justify-center"
+              >
+                <BarChart3 class="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Advanced Analytics</h3>
+                <p class="text-gray-600">
+                  Get deep insights into your business with AI-powered analytics and real-time
+                  reporting.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card
+            class="bg-white border-2 border-primary shadow-lg rounded-3xl p-8 hover:shadow-xl transition-shadow relative"
+          >
+            <Badge
+              class="absolute -top-3 left-6 bg-primary text-white"
+            >
+              Most Popular
+            </Badge>
+            <CardContent class="p-0 space-y-6">
+              <div
+                class="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-500 rounded-2xl flex items-center justify-center"
+              >
+                <Zap class="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Lightning Fast</h3>
+                <p class="text-gray-600">
+                  Built for speed with edge computing and optimized for performance at scale.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card
+            class="bg-white border-0 shadow-lg rounded-3xl p-8 hover:shadow-xl transition-shadow"
+          >
+            <CardContent class="p-0 space-y-6">
+              <div
+                class="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-500 rounded-2xl flex items-center justify-center"
+              >
+                <Shield class="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-gray-900 mb-3">Enterprise Security</h3>
+                <p class="text-gray-600">
+                  Bank-level security with SOC 2 compliance and end-to-end encryption.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </section>

@@ -394,7 +394,7 @@ watch([totalProfit, totalCustomer, totalCost], () => {
                 <td class="py-4 px-4">
                   <div class="flex items-center gap-3">
                     <div
-                      class="h-10 w-10 rounded-full bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center text-white text-xs font-medium"
+                      class="h-10 w-10 rounded-full bg-gradient-to-br from-green-500 to-blue-500 flex items-center justify-center text-white text-xs font-medium"
                     >
                       {{
                         row.influencer
