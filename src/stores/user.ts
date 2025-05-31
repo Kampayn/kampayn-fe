@@ -2,14 +2,11 @@ import { api } from '@/lib/axios'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { toast } from 'vue-sonner'
-import { useRouter } from 'vue-router'
 
 import authService from '@/services/auth'
 import type { User } from '@/types/user'
-import type { LoginParams } from '@/types/auth'
+import type { LoginParams, RegisterParams } from '@/types/auth'
 // import { logCustomEvent } from '@/lib/analytics'
-
-const router = useRouter()
 
 interface Data {
   user: User
@@ -84,9 +81,28 @@ export const useUserStore = defineStore('user', () => {
       toast.success('Logged in successfully')
       // setUser(data!.Data)
       console.log('user', data)
-      router.push('/dashboard')
     } catch (error) {
       toast.error('Login failed 2')
+      console.log(error)
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  const register = async (params: RegisterParams) => {
+    isLoading.value = true
+    try {
+      const { data, error } = await authService.register(params)
+      if (error) {
+        toast.error('Registration failed')
+        console.log(error)
+        console.log(data)
+        return
+      }
+
+      toast.success('Registration successful')
+    } catch (error) {
+      toast.error('Registration failed 2')
       console.log(error)
     } finally {
       isLoading.value = false
@@ -121,6 +137,7 @@ export const useUserStore = defineStore('user', () => {
     isLoggedIn,
     setUser,
     login,
+    register,
     logout,
   }
 })

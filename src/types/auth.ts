@@ -17,22 +17,20 @@ export interface LoginResponse {
   }
 }
 
-export interface AuthResponse {
-  Success: boolean
-  Message: string
-  Errors: null | string[]
-  Data: {
-    user: User
-    access_token: string
-    refresh_token: string
-  }
+export interface RegisterParams {
+  name: string
+  email: string
+  password: string
+  idToken: string
 }
 
-export interface ProfileResponse {
-  Success: boolean
-  Message: string
-  Errors: null | string[]
-  Data: User
+export interface RegisterResponse {
+  statusCode: number
+  error?: string
+  message: string
+  data?: {
+    user: User
+  }
 }
 
 export interface ApiError {

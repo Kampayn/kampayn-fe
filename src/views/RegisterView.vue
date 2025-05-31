@@ -5,38 +5,45 @@ import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
 import { useFirebaseAuth } from 'vuefire'
-import { 
-  GoogleAuthProvider, 
-  signInWithPopup, 
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
   createUserWithEmailAndPassword,
-  updateProfile 
+  updateProfile,
 } from 'firebase/auth'
 import { toast } from 'vue-sonner'
 import { useRouter } from 'vue-router'
 import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
 
+import { useUserStore } from '@/stores/user'
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import KHeader from '@/components/KHeader.vue'
 
-const auth = useFirebaseAuth()
-const router = useRouter()
 const googleAuthProvider = new GoogleAuthProvider()
 
-const isLoading = ref(false)
+const auth = useFirebaseAuth()
+const router = useRouter()
+const userStore = useUserStore()
+
+const { isLoading } = storeToRefs(userStore)
 const isGoogleLoading = ref(false)
 
 const formSchema = toTypedSchema(
   z
     .object({
-      username: z.string().min(4, 'Username minimal 4 karakter').max(20, 'Username maksimal 20 karakter'),
+      username: z
+        .string()
+        .min(4, 'Username minimal 4 karakter')
+        .max(20, 'Username maksimal 20 karakter'),
       email: z.string().email('Email tidak valid'),
       password: z.string().min(8, 'Password minimal 8 karakter'),
       confirmPassword: z.string().min(8, 'Konfirmasi password minimal 8 karakter'),
     })
     .refine((data) => data.password === data.confirmPassword, {
-      message: "Password tidak cocok",
+      message: 'Password tidak cocok',
       path: ['confirmPassword'],
     }),
 )
@@ -52,20 +59,20 @@ const handleGoogleSignUp = async () => {
     if (!auth) throw new Error('Firebase auth is not initialized')
 
     const result = await signInWithPopup(auth, googleAuthProvider)
-    
+
     // Get ID token for backend validation
     const idToken = await result.user.getIdToken()
     console.log('Google Registration ID Token:', idToken)
-    
+
     // Optional: Send token to your backend for validation and user creation
     // await validateTokenWithBackend(idToken, { isNewUser })
-    
+
     if (result.operationType === 'signIn') {
       toast.success('Akun berhasil dibuat dengan Google')
     } else {
       toast.success('Berhasil masuk dengan Google')
     }
-    
+
     router.push('/dashboard') // or wherever you want to redirect
   } catch (error) {
     toast.error('Gagal login dengan Google')
@@ -77,30 +84,24 @@ const handleGoogleSignUp = async () => {
 
 const onSubmit = handleSubmit(async (values) => {
   isLoading.value = true
-
   try {
     if (!auth) throw new Error('Firebase auth is not initialized')
 
-    // Create user with email and password
     const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password)
-    
+
     // Update user profile with username
     await updateProfile(userCredential.user, {
-      displayName: values.username
+      displayName: values.username,
     })
-    
+
     // Get ID token for backend validation
     const idToken = await userCredential.user.getIdToken()
-    console.log('Email Registration ID Token:', idToken)
-    
-    // Optional: Send token to your backend for validation and user creation
-    // await validateTokenWithBackend(idToken, { 
-    //   username: values.username,
-    //   isNewUser: true 
-    // })
-    
-    toast.success('Akun berhasil dibuat')
-    router.push('/dashboard') // or wherever you want to redirect
+    userStore.register({
+      name: values.username,
+      email: values.email,
+      password: values.password,
+      idToken,
+    })
   } catch (error) {
     toast.error('Gagal membuat akun. Silakan coba lagi')
     console.error('Email registration error:', error)
@@ -120,11 +121,11 @@ const onSubmit = handleSubmit(async (values) => {
 //       },
 //       body: JSON.stringify(userData || {})
 //     })
-    
+
 //     if (!response.ok) {
 //       throw new Error('Backend validation failed')
 //     }
-    
+
 //     const data = await response.json()
 //     console.log('Backend registration success:', data)
 //     return data
@@ -206,10 +207,10 @@ const onSubmit = handleSubmit(async (values) => {
           </FormItem>
         </FormField>
 
-        <Button 
-          type="submit" 
-          size="lg" 
-          :disabled="!meta.valid || isLoading || isGoogleLoading" 
+        <Button
+          type="submit"
+          size="lg"
+          :disabled="!meta.valid || isLoading || isGoogleLoading"
           class="w-full"
         >
           <LoaderCircle v-if="isLoading" class="animate-spin size-5 mr-2" />
@@ -224,16 +225,22 @@ const onSubmit = handleSubmit(async (values) => {
         <div class="flex-1 border-t border-border"></div>
       </div>
 
-      <Button 
+      <Button
         @click="handleGoogleSignUp"
-        variant="outline" 
-        size="lg" 
+        variant="outline"
+        size="lg"
         :disabled="isLoading || isGoogleLoading"
         class="w-full"
       >
         <LoaderCircle v-if="isGoogleLoading" class="animate-spin size-5 mr-2" />
         <template v-else>
-          <img src="/assets/logo/google.svg" alt="Google Logo" width="20" height="20" class="mr-2" />
+          <img
+            src="/assets/logo/google.svg"
+            alt="Google Logo"
+            width="20"
+            height="20"
+            class="mr-2"
+          />
           Daftar dengan Google
         </template>
       </Button>
