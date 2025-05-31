@@ -29,3 +29,27 @@ export interface InfluencerProfile {
   instagram_avg_comments?: string
   instagram_engagement_rate?: string
 }
+
+export interface UserRoleParams {
+  role: 'influencer' | 'brand'
+  category: string
+  photo_url?: string
+  company?: string
+  phone_number?: string
+  instagram_username?: string
+  instagram_followers?: string
+  instagram_avg_likes?: string
+  instagram_avg_comments?: string
+  instagram_engagement_rate?: string
+  portfolio_url?: string
+  follower_tier?: 'nano' |'micro' |'macro' |'mega'
+}
+
+export interface UserResponse {
+  user: User
+}
+
+export interface ApiError {
+  message: string
+  statusCode?: number
+}

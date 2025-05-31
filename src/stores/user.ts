@@ -4,8 +4,9 @@ import { computed, ref } from 'vue'
 import { toast } from 'vue-sonner'
 
 import authService from '@/services/auth'
-import type { User } from '@/types/user'
+import type { User, UserRoleParams } from '@/types/user'
 import type { GoogleParams, LoginParams, RegisterParams } from '@/types/auth'
+import userService from '@/services/user'
 // import { logCustomEvent } from '@/lib/analytics'
 
 interface Data {
@@ -81,7 +82,11 @@ export const useUserStore = defineStore('user', () => {
       }
       toast.success('Logged in successfully')
 
-      setUser(data!.data!)
+      setUser({
+        user: data!.data!.user,
+        access_token: data!.data!.accessToken,
+        refresh_token: data!.data!.refreshToken,
+      })
     } catch (error) {
       toast.error('Login failed 2')
       console.log(error)
@@ -133,6 +138,28 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const completeProfile = async (params: UserRoleParams) => {
+    isLoading.value = true
+    try {
+      const { data, error } = await userService.completeProfile(params)
+      if (error) {
+        toast.error('Complete profile failed')
+        console.log(error)
+        console.log(data)
+        return
+      }
+
+      toast.success('Complete profile successful')
+      console.log(data)
+      // setUser(data!.data!)
+    } catch (error) {
+      toast.error('Complete profile failed 2')
+      console.log(error)
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   const logout = () => {
     // TODO Log logout event before clearing user data
     // if (user.value.id) {
@@ -164,6 +191,7 @@ export const useUserStore = defineStore('user', () => {
     login,
     google,
     register,
+    completeProfile,
     logout,
   }
 })
