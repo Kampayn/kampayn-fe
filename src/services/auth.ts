@@ -1,7 +1,15 @@
 import { AxiosError } from 'axios'
 
 import { api } from '@/lib/axios'
-import type { ApiError, LoginParams, LoginResponse, RegisterParams, RegisterResponse } from '@/types/auth'
+import type {
+  ApiError,
+  GoogleParams,
+  GoogleResponse,
+  LoginParams,
+  LoginResponse,
+  RegisterParams,
+  RegisterResponse,
+} from '@/types/auth'
 
 interface AuthService {
   login: (
@@ -10,6 +18,9 @@ interface AuthService {
   register: (
     params: RegisterParams,
   ) => Promise<{ data: RegisterResponse | null; error: AxiosError<ApiError> | null }>
+  google: (
+    params: GoogleParams,
+  ) => Promise<{ data: GoogleResponse | null; error: AxiosError<ApiError> | null }>
 }
 
 const authService: AuthService = {
@@ -28,7 +39,15 @@ const authService: AuthService = {
     } catch (error) {
       return { data: null, error: error as AxiosError<ApiError> }
     }
-  }
+  },
+  google: async (params: GoogleParams) => {
+    try {
+      const response = await api.post<GoogleResponse>('/auth/google', params)
+      return { data: response.data, error: null }
+    } catch (error) {
+      return { data: null, error: error as AxiosError<ApiError> }
+    }
+  },
 }
 
 export default authService

@@ -43,16 +43,11 @@ const handleGoogleSignIn = async () => {
   try {
     if (!auth) throw new Error('Firebase auth is not initialized')
 
-    const result = await signInWithPopup(auth, googleAuthProvider)
+    const userCredential = await signInWithPopup(auth, googleAuthProvider)
 
     // Get ID token for backend validation
-    const idToken = await result.user.getIdToken()
-    console.log('Google ID Token:', idToken)
-
-    // Optional: Send token to your backend for validation
-    // await validateTokenWithBackend(idToken)
-
-    toast.success('Berhasil login dengan Google')
+    const idToken = await userCredential.user.getIdToken()
+    userStore.google({ idToken })
     router.push('/dashboard') // or wherever you want to redirect
   } catch (error) {
     toast.error('Gagal login dengan Google')
@@ -79,30 +74,6 @@ const onSubmit = handleSubmit(async (values) => {
     isLoading.value = false
   }
 })
-
-// Optional: Function to validate token with your backend
-// const validateTokenWithBackend = async (idToken: string) => {
-//   try {
-//     const response = await fetch('http://localhost:3000/api/auth/validate', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Authorization': `Bearer ${idToken}`
-//       }
-//     })
-
-//     if (!response.ok) {
-//       throw new Error('Backend validation failed')
-//     }
-
-//     const data = await response.json()
-//     console.log('Backend validation success:', data)
-//     return data
-//   } catch (error) {
-//     console.error('Backend validation error:', error)
-//     throw error
-//   }
-// }
 </script>
 
 <template>

@@ -58,21 +58,11 @@ const handleGoogleSignUp = async () => {
   try {
     if (!auth) throw new Error('Firebase auth is not initialized')
 
-    const result = await signInWithPopup(auth, googleAuthProvider)
+    const userCredential = await signInWithPopup(auth, googleAuthProvider)
 
     // Get ID token for backend validation
-    const idToken = await result.user.getIdToken()
-    console.log('Google Registration ID Token:', idToken)
-
-    // Optional: Send token to your backend for validation and user creation
-    // await validateTokenWithBackend(idToken, { isNewUser })
-
-    if (result.operationType === 'signIn') {
-      toast.success('Akun berhasil dibuat dengan Google')
-    } else {
-      toast.success('Berhasil masuk dengan Google')
-    }
-
+    const idToken = await userCredential.user.getIdToken()
+    userStore.google({ idToken })
     router.push('/dashboard') // or wherever you want to redirect
   } catch (error) {
     toast.error('Gagal login dengan Google')
@@ -109,32 +99,6 @@ const onSubmit = handleSubmit(async (values) => {
     isLoading.value = false
   }
 })
-
-// Optional: Function to validate token with your backend
-// const validateTokenWithBackend = async (idToken: string, userData?: any) => {
-//   try {
-//     const response = await fetch('http://localhost:3000/api/auth/register', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         'Authorization': `Bearer ${idToken}`
-//       },
-//       body: JSON.stringify(userData || {})
-//     })
-
-//     if (!response.ok) {
-//       throw new Error('Backend validation failed')
-//     }
-
-//     const data = await response.json()
-//     console.log('Backend registration success:', data)
-//     return data
-//   } catch (error) {
-//     console.error('Backend registration error:', error)
-//     // Don't throw error here - frontend registration can work without backend
-//     return null
-//   }
-// }
 </script>
 
 <template>

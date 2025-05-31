@@ -5,7 +5,7 @@ import { toast } from 'vue-sonner'
 
 import authService from '@/services/auth'
 import type { User } from '@/types/user'
-import type { LoginParams, RegisterParams } from '@/types/auth'
+import type { GoogleParams, LoginParams, RegisterParams } from '@/types/auth'
 // import { logCustomEvent } from '@/lib/analytics'
 
 interface Data {
@@ -16,6 +16,7 @@ interface Data {
 
 export const useUserStore = defineStore('user', () => {
   const isLoading = ref(false)
+  const isGoogleLogin = ref(false)
   const user = ref<Omit<User, 'token'>>({
     id: '',
     name: '',
@@ -109,6 +110,29 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const google = async (params: GoogleParams) => {
+    isLoading.value = true
+    try {
+      const { data, error } = await authService.google(params)
+      if (error) {
+        toast.error('Google login failed')
+        console.log(error)
+        console.log(data)
+        return
+      }
+
+      toast.success('Google login successful')
+      // setUser(data!.Data)
+      console.log('user', data)
+      isGoogleLogin.value = true
+    } catch (error) {
+      toast.error('Google login failed 2')
+      console.log(error)
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   const logout = () => {
     // TODO Log logout event before clearing user data
     // if (user.value.id) {
@@ -135,8 +159,10 @@ export const useUserStore = defineStore('user', () => {
     refresh_token,
     getUser,
     isLoggedIn,
+    isGoogleLogin,
     setUser,
     login,
+    google,
     register,
     logout,
   }
