@@ -25,7 +25,7 @@ export const useUserStore = defineStore('user', () => {
   const access_token = ref('')
   const refresh_token = ref('')
 
-  const storedUser = localStorage.getItem('gcw.auth.user')
+  const storedUser = localStorage.getItem('kampaiyn.auth.user')
   if (storedUser) {
     const userData = JSON.parse(storedUser) as Data
     user.value = {
@@ -51,7 +51,7 @@ export const useUserStore = defineStore('user', () => {
     refresh_token.value = values.refresh_token
 
     localStorage.setItem(
-      'gcw.auth.user',
+      'kampaiyn.auth.user',
       JSON.stringify({
         user: values.user,
         access_token: values.access_token,
@@ -80,8 +80,8 @@ export const useUserStore = defineStore('user', () => {
         return
       }
       toast.success('Logged in successfully')
-      // setUser(data!.Data)
-      console.log('user', data)
+
+      setUser(data!.data!)
     } catch (error) {
       toast.error('Login failed 2')
       console.log(error)
@@ -146,7 +146,7 @@ export const useUserStore = defineStore('user', () => {
     }
     access_token.value = ''
     refresh_token.value = ''
-    localStorage.removeItem('gcw.auth.user')
+    localStorage.removeItem('kampaiyn.auth.user')
     api.defaults.headers.common['Authorization'] = ''
 
     // TODO google Logout
