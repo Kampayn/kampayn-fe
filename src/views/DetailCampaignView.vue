@@ -9,7 +9,17 @@ import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { ArrowLeft, ExternalLink, Calculator, TrendingUp, Users } from 'lucide-vue-next'
+import {
+  ArrowLeft,
+  ExternalLink,
+  Calculator,
+  TrendingUp,
+  Users,
+  Plus,
+  Check,
+  Copy,
+  Loader,
+} from 'lucide-vue-next'
 
 // Types
 interface ReviewRow {
@@ -17,8 +27,7 @@ interface ReviewRow {
   influencer: string
   preview: string
   status: string
-  statusType: 'pending' | 'approved' | 'revision'
-  comment: string
+  statusType: 'pending' | 'approved' | 'rejected'
 }
 
 interface AnalysisResult {
@@ -81,7 +90,6 @@ const rows = ref<ReviewRow[]>([
     preview: 'Link GDrive',
     status: 'Pending Review',
     statusType: 'pending',
-    comment: '',
   },
   {
     id: 2,
@@ -89,15 +97,13 @@ const rows = ref<ReviewRow[]>([
     preview: 'Link GDrive',
     status: 'Approved',
     statusType: 'approved',
-    comment: 'Bagus sekali. Saya suka.\nSilahkan di upload',
   },
   {
     id: 3,
     influencer: 'Keysha Moe',
     preview: 'Link GDrive',
-    status: 'Needs Revision',
-    statusType: 'revision',
-    comment: 'Tolong ganti hashtag-nya\njadi #RimrainJaya',
+    status: 'Approved',
+    statusType: 'approved',
   },
 ])
 
@@ -229,7 +235,7 @@ const getStatusBadgeVariant = (statusType: string) => {
       return 'outline'
     case 'approved':
       return 'default'
-    case 'revision':
+    case 'rejected':
       return 'destructive'
     default:
       return 'outline'
@@ -328,7 +334,7 @@ watch([totalProfit, totalCustomer, totalCost], () => {
     <Separator class="my-8" />
 
     <!-- Brief Section -->
-    <Card class="mb-8">
+    <Card class="mb-8" v-if="false">
       <CardHeader>
         <CardTitle class="flex items-center gap-2">
           <span>📋</span>
@@ -365,11 +371,18 @@ watch([totalProfit, totalCustomer, totalCost], () => {
     </Card>
 
     <!-- Review Task Section -->
-    <Card class="mb-8">
+    <Card class="mb-8" v-if="false">
       <CardHeader>
-        <CardTitle class="flex items-center gap-2">
-          <Users class="h-5 w-5" />
-          Review Task
+        <CardTitle class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <Users class="h-5 w-5" />
+            Review Task
+          </div>
+
+          <Button>
+            <Plus class="h-5 w-5" />
+            <span>Tambah Influcencer</span>
+          </Button>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -379,9 +392,9 @@ watch([totalProfit, totalCustomer, totalCost], () => {
               <tr class="border-b border-gray-200">
                 <th class="text-left py-3 px-4 font-medium text-gray-600">No</th>
                 <th class="text-left py-3 px-4 font-medium text-gray-600">Influencer</th>
-                <th class="text-left py-3 px-4 font-medium text-gray-600">Preview</th>
                 <th class="text-left py-3 px-4 font-medium text-gray-600">Status</th>
-                <th class="text-left py-3 px-4 font-medium text-gray-600">Comment</th>
+                <th class="text-left py-3 px-4 font-medium text-gray-600">Preview</th>
+                <th class="text-left py-3 px-4 font-medium text-gray-600">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -407,6 +420,11 @@ watch([totalProfit, totalCustomer, totalCost], () => {
                   </div>
                 </td>
                 <td class="py-4 px-4">
+                  <Badge :variant="getStatusBadgeVariant(row.statusType)">
+                    {{ row.status }}
+                  </Badge>
+                </td>
+                <td class="py-4 px-4">
                   <a
                     href="#"
                     class="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-sm font-medium"
@@ -416,17 +434,11 @@ watch([totalProfit, totalCustomer, totalCost], () => {
                   </a>
                 </td>
                 <td class="py-4 px-4">
-                  <Badge :variant="getStatusBadgeVariant(row.statusType)">
-                    {{ row.status }}
-                  </Badge>
-                </td>
-                <td class="py-4 px-4">
-                  <Button v-if="row.statusType === 'pending'" size="sm" variant="outline">
-                    Add Comment
-                  </Button>
-                  <div v-else class="text-sm text-gray-700 whitespace-pre-line max-w-xs">
-                    {{ row.comment }}
+                  <div v-if="row.statusType === 'pending'" class="flex gap-2">
+                    <Button size="sm">Accept</Button>
+                    <Button size="sm" variant="destructive">Reject</Button>
                   </div>
+                  <Button v-else size="sm" variant="outline">Send Message</Button>
                 </td>
               </tr>
             </tbody>
@@ -436,7 +448,7 @@ watch([totalProfit, totalCustomer, totalCost], () => {
     </Card>
 
     <!-- Campaign Analysis Form -->
-    <Card class="mb-8">
+    <Card class="mb-8" v-if="false">
       <CardHeader>
         <CardTitle class="flex items-center gap-2">
           <Calculator class="h-5 w-5" />
@@ -473,7 +485,6 @@ watch([totalProfit, totalCustomer, totalCost], () => {
             </label>
             <Input id="total-customer" v-model="totalCustomer" placeholder="0" type="number" />
           </div>
-
         </div>
 
         <div class="flex justify-end mt-6">
@@ -546,6 +557,75 @@ watch([totalProfit, totalCustomer, totalCost], () => {
         </CardContent>
       </Card>
     </div>
+
+    <Card v-if="false">
+      <CardHeader>
+        <CardTitle class="flex items-center gap-2"> Budget & Application Timeline </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div>
+            <span class="font-semibold text-gray-900">Budget:</span>
+            <span class="ml-2 text-gray-700">Rp 000000000,-</span>
+          </div>
+          <div>
+            <span class="font-semibold text-gray-900">Payment:</span>
+            <span class="ml-2 text-gray-700">Direct Transfer</span>
+          </div>
+          <div>
+            <span class="font-semibold text-gray-900">Timeline:</span>
+            <span class="ml-2 text-gray-700">01-01-2023 - 01-01-2023</span>
+          </div>
+        </div>
+
+        <Button class="mt-4 w-full">
+          <Check class="h-5 w-5" />
+          <span>Apply Now</span>
+        </Button>
+      </CardContent>
+    </Card>
+
+    <Card v-if="true">
+      <CardHeader>
+        <CardTitle class="flex items-center gap-2">
+          <Users class="h-5 w-5" />
+          Influencer Assigment
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div class="space-y-6">
+          <div class="flex items-center justify-between">
+            <span class="font-medium text-gray-900">Submission Status</span>
+            <Badge class="bg-teal-100 text-teal-800 hover:bg-teal-200 flex items-center space-x-2">
+              <Loader class="h-3 w-3" />
+              <span>Pending Review</span>
+            </Badge>
+          </div>
+
+          <div>
+            <label class="block font-medium text-gray-900 mb-2">Link Submission</label>
+            <div class="flex space-x-2">
+              <Input
+                type="url"
+                placeholder="https://hdsufHSDejdfbSDdefnsdlX..."
+                class="flex-1"
+                defaultValue="https://hdsufHSDejdfbSDdefnsdlX..."
+              />
+              <Button variant="outline" size="icon">
+                <Copy class="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div class="flex justify-end space-x-3 pt-4">
+            <Button variant="outline" class="text-red-600 border-red-200 hover:bg-red-50">
+              Delete
+            </Button>
+            <Button class="bg-teal-600 hover:bg-teal-700 text-white">Send</Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   </main>
 
   <KFooter />
