@@ -83,9 +83,11 @@ const tasks = ref([
                 <Badge
                   :class="[
                     'rounded-full font-normal',
-                    task.status === 'Completed' ? 'bg-green-100 text-green-700' :
-                    task.status === 'In Progress' ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-red-100 text-gray-600'
+                    task.status === 'Completed'
+                      ? 'bg-green-100 text-green-700'
+                      : task.status === 'In Progress'
+                        ? 'bg-yellow-100 text-yellow-700'
+                        : 'bg-red-100 text-gray-600',
                   ]"
                 >
                   {{ task.status }}

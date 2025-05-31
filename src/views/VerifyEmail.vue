@@ -13,7 +13,7 @@ import KHeader from '@/components/KHeader.vue'
 const formSchema = toTypedSchema(
   z.object({
     code: z.string().length(6, { message: 'Kode harus terdiri dari 6 angka' }),
-  })
+  }),
 )
 
 const { handleSubmit } = useForm({

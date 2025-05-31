@@ -74,11 +74,7 @@ import { Badge } from '@/components/ui/badge'
           <Card
             class="bg-white border-2 border-primary shadow-lg rounded-3xl p-8 hover:shadow-xl transition-shadow relative"
           >
-            <Badge
-              class="absolute -top-3 left-6 bg-primary text-white"
-            >
-              Most Popular
-            </Badge>
+            <Badge class="absolute -top-3 left-6 bg-primary text-white"> Most Popular </Badge>
             <CardContent class="p-0 space-y-6">
               <div
                 class="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-500 rounded-2xl flex items-center justify-center"

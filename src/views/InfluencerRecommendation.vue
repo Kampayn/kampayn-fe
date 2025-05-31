@@ -107,18 +107,12 @@ const workedTogether = ref([...bestForYou.value])
           ></div>
 
           <!-- Nama -->
-          <h3
-            class="absolute font-semibold text-xl"
-            style="top: 50px; left: 110px; right: 43px"
-          >
+          <h3 class="absolute font-semibold text-xl" style="top: 50px; left: 110px; right: 43px">
             {{ influencer.name }}
           </h3>
 
           <!-- Followers -->
-          <p
-            class="absolute text-sm text-gray-500"
-            style="top: 85px; left: 110px; right: 43px"
-          >
+          <p class="absolute text-sm text-gray-500" style="top: 85px; left: 110px; right: 43px">
             {{ influencer.followers }}
           </p>
 
@@ -184,18 +178,12 @@ const workedTogether = ref([...bestForYou.value])
           ></div>
 
           <!-- Nama -->
-          <h3
-            class="absolute font-semibold text-xl"
-            style="top: 50px; left: 110px; right: 43px"
-          >
+          <h3 class="absolute font-semibold text-xl" style="top: 50px; left: 110px; right: 43px">
             {{ influencer.name }}
           </h3>
 
           <!-- Followers -->
-          <p
-            class="absolute text-sm text-gray-500"
-            style="top: 85px; left: 110px; right: 43px"
-          >
+          <p class="absolute text-sm text-gray-500" style="top: 85px; left: 110px; right: 43px">
             {{ influencer.followers }}
           </p>
 
