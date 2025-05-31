@@ -3,7 +3,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
-import VerifyEmail from '@/views/VerifyEmail.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import CreateCampaignView from '@/views/CreateCampaignView.vue'
 import InfluencerRecommendation from '@/views/InfluencerRecommendation.vue'
@@ -31,7 +30,7 @@ const router = createRouter({
     {
       path: '/verify-email',
       name: 'verify-email',
-      component: VerifyEmail,
+      component: () => import('../views/VerifyEmail.vue'),
     },
     {
       path: '/choose-account-type',
