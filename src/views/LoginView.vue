@@ -1,25 +1,29 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { LoaderCircle, Lock, Mail } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
 import { useFirebaseAuth } from 'vuefire'
-import { GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from 'firebase/auth'
+import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
 import { toast } from 'vue-sonner'
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
 
+import { useUserStore } from '@/stores/user'
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import KHeader from '@/components/KHeader.vue'
 
-const auth = useFirebaseAuth()
-const router = useRouter()
 const googleAuthProvider = new GoogleAuthProvider()
 
-const isLoading = ref(false)
+const auth = useFirebaseAuth()
+const router = useRouter()
+const userStore = useUserStore()
+
+const { isLoading } = storeToRefs(userStore)
 const isGoogleLoading = ref(false)
 
 const formSchema = toTypedSchema(
@@ -40,14 +44,14 @@ const handleGoogleSignIn = async () => {
     if (!auth) throw new Error('Firebase auth is not initialized')
 
     const result = await signInWithPopup(auth, googleAuthProvider)
-    
+
     // Get ID token for backend validation
     const idToken = await result.user.getIdToken()
     console.log('Google ID Token:', idToken)
-    
+
     // Optional: Send token to your backend for validation
     // await validateTokenWithBackend(idToken)
-    
+
     toast.success('Berhasil login dengan Google')
     router.push('/dashboard') // or wherever you want to redirect
   } catch (error) {
@@ -60,23 +64,16 @@ const handleGoogleSignIn = async () => {
 
 const onSubmit = handleSubmit(async (values) => {
   isLoading.value = true
-
   try {
     if (!auth) throw new Error('Firebase auth is not initialized')
 
     const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password)
-    
+
     // Get ID token for backend validation
     const idToken = await userCredential.user.getIdToken()
-    console.log('Email/Password ID Token:', idToken)
-    
-    // Optional: Send token to your backend for validation
-    // await validateTokenWithBackend(idToken)
-    
-    toast.success('Berhasil login')
-    router.push('/dashboard') // or wherever you want to redirect
+    userStore.login({ email: values.email, password: values.password, idToken })
   } catch (error) {
-    toast.error('Gagal login')
+    toast.error('Email atau password salah')
     console.error('Email/Password sign in error:', error)
   } finally {
     isLoading.value = false
@@ -93,11 +90,11 @@ const onSubmit = handleSubmit(async (values) => {
 //         'Authorization': `Bearer ${idToken}`
 //       }
 //     })
-    
+
 //     if (!response.ok) {
 //       throw new Error('Backend validation failed')
 //     }
-    
+
 //     const data = await response.json()
 //     console.log('Backend validation success:', data)
 //     return data
@@ -157,10 +154,10 @@ const onSubmit = handleSubmit(async (values) => {
           </RouterLink>
         </div>
 
-        <Button 
-          type="submit" 
-          size="lg" 
-          :disabled="!meta.valid || isLoading || isGoogleLoading" 
+        <Button
+          type="submit"
+          size="lg"
+          :disabled="!meta.valid || isLoading || isGoogleLoading"
           class="w-full"
         >
           <LoaderCircle v-if="isLoading" class="animate-spin size-5 mr-2" />
@@ -184,7 +181,13 @@ const onSubmit = handleSubmit(async (values) => {
       >
         <LoaderCircle v-if="isGoogleLoading" class="animate-spin size-5 mr-2" />
         <template v-else>
-          <img src="/assets/logo/google.svg" alt="Google Logo" width="20" height="20" class="mr-2" />
+          <img
+            src="/assets/logo/google.svg"
+            alt="Google Logo"
+            width="20"
+            height="20"
+            class="mr-2"
+          />
           Masuk dengan Google
         </template>
       </Button>
