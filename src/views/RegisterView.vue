@@ -9,7 +9,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   createUserWithEmailAndPassword,
-  updateProfile,
+  sendEmailVerification,
 } from 'firebase/auth'
 import { toast } from 'vue-sonner'
 import { useRouter } from 'vue-router'
@@ -79,18 +79,19 @@ const onSubmit = handleSubmit(async (values) => {
 
     const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password)
 
-    // Update user profile with username
-    await updateProfile(userCredential.user, {
-      displayName: values.username,
-    })
+    const actionCodeSettings = {
+      url: 'https://kampayn.web.id/login', // Ganti dengan URL Anda
+      handleCodeInApp: true,
+    };
+
+    // Kirim email verifikasi
+    await sendEmailVerification(userCredential.user, actionCodeSettings);
 
     // Get ID token for backend validation
-    const idToken = await userCredential.user.getIdToken()
     userStore.register({
       name: values.username,
       email: values.email,
       password: values.password,
-      idToken,
     })
   } catch (error) {
     toast.error('Gagal membuat akun. Silakan coba lagi')

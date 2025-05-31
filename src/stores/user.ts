@@ -101,7 +101,7 @@ export const useUserStore = defineStore('user', () => {
         return
       }
 
-      toast.success('Registration successful')
+      toast.success(data!.message)
     } catch (error) {
       toast.error('Registration failed 2')
       console.log(error)
