@@ -13,14 +13,6 @@ const pick = (type: AccountType) => (selectedType.value = type)
 
 <template>
   <main class="min-h-screen flex flex-col">
-    <!-- -------------  header  ------------- -->
-    <!-- <header class="border-b p-4">
-      <div class="container mx-auto">
-        <img src="/logo.png" alt="Kampaiyn Logo" width="180" height="40" class="h-10 w-auto" />
-      </div>
-    </header> -->
-
-    <!-- -------------  body  ------------- -->
     <div class="flex-1 flex flex-col items-center justify-center p-4 md:p-6">
       <div class="w-full max-w-md mx-auto">
         <div class="text-center mb-8">
@@ -29,10 +21,8 @@ const pick = (type: AccountType) => (selectedType.value = type)
         </div>
 
         <div class="space-y-6">
-          <!-- keep shadcn-vue radio group in sync -->
           <RadioGroup v-model="selectedType">
             <div class="space-y-4">
-              <!-- ----------  Brand card  ---------- -->
               <Card
                 role="button"
                 tabindex="0"
@@ -46,7 +36,6 @@ const pick = (type: AccountType) => (selectedType.value = type)
                 ]"
               >
                 <div class="flex items-start gap-3">
-                  <!-- prevent this radio from swallowing the click -->
                   <RadioGroupItem value="brand" id="brand" class="mt-1 pointer-events-none" />
                   <div class="flex-1">
                     <Label for="brand" class="text-lg font-medium cursor-pointer">
@@ -59,7 +48,6 @@ const pick = (type: AccountType) => (selectedType.value = type)
                 </div>
               </Card>
 
-              <!-- -------  Influencer card  ------- -->
               <Card
                 role="button"
                 tabindex="0"
@@ -92,7 +80,14 @@ const pick = (type: AccountType) => (selectedType.value = type)
             </div>
           </RadioGroup>
 
-          <Button size="lg" :disabled="!selectedType" class="w-full"> Buat Akun </Button>
+          <Button
+            @click="$router.push({ name: `${selectedType}-register` })"
+            size="lg"
+            :disabled="!selectedType"
+            class="w-full"
+          >
+            Buat Akun
+          </Button>
         </div>
       </div>
     </div>

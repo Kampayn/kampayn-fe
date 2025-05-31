@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import { useUserStore } from '@/stores/user'
 import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import DashboardView from '@/views/DashboardView.vue'
 import CreateCampaignView from '@/views/CreateCampaignView.vue'
 import InfluencerRecommendation from '@/views/InfluencerRecommendation.vue'
-
 import TaskListInfluencer from '@/views/TaskListInfluencerView.vue'
 
 const router = createRouter({
@@ -36,41 +36,49 @@ const router = createRouter({
       path: '/choose-account-type',
       name: 'choose-account-type',
       component: () => import('../views/ChooseAccountTypeView.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/brand-register',
       name: 'brand-register',
       component: () => import('../views/BrandRegisterView.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/influencer-register',
       name: 'influencer-register',
       component: () => import('../views/InfluencerRegisterView.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/dashboard',
       name: 'dashboard',
       component: DashboardView,
+      meta: { requiresAuth: true },
     },
     {
       path: '/create',
       name: 'create',
       component: CreateCampaignView,
+      meta: { requiresAuth: true },
     },
     {
       path: '/influencer-recommendation',
       name: 'influencer-recommendation',
       component: InfluencerRecommendation,
+      meta: { requiresAuth: true },
     },
     {
       path: '/:id',
       name: 'detail',
       component: () => import('../views/DetailCampaignView.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/task-list-influencer',
       name: 'task-list-influencer',
       component: TaskListInfluencer,
+      meta: { requiresAuth: true },
     },
     {
       path: '/about',
@@ -81,6 +89,23 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
     },
   ],
+})
+
+// Navigation guard to check authentication for protected routes
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+
+  if (requiresAuth && !userStore.isLoggedIn) {
+    // Redirect to login page with the intended destination as a query parameter
+    next({ name: 'login' })
+  } else {
+    if (!userStore.user.role && to.name === 'dashboard') {
+      next({ name: 'choose-account-type' })
+    } else {
+      next()
+    }
+  }
 })
 
 export default router

@@ -67,6 +67,8 @@ const onSubmit = handleSubmit(async (values) => {
     // Get ID token for backend validation
     const idToken = await userCredential.user.getIdToken()
     userStore.login({ email: values.email, password: values.password, idToken })
+
+    router.push('/dashboard')
   } catch (error) {
     toast.error('Email atau password salah')
     console.error('Email/Password sign in error:', error)
