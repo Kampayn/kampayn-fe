@@ -5,7 +5,7 @@ import { useUserStore } from '@/stores/user'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { Menu } from 'lucide-vue-next'
+import { Bell, LogOut, Menu, MessageCircle, User } from 'lucide-vue-next'
 
 interface Props {
   variant?: 'outline' | 'solid'
@@ -23,10 +23,22 @@ const links = [
   {
     label: 'Profile',
     href: '/profile',
+    icon: User,
+  },
+  {
+    label: 'Notifications',
+    href: '/notifications',
+    icon: Bell,
+  },
+  {
+    label: 'Chats',
+    href: '/chats',
+    icon: MessageCircle,
   },
   {
     label: 'Logout',
     href: '/logout',
+    icon: LogOut,
   },
 ]
 </script>
@@ -74,20 +86,20 @@ const links = [
         <Sheet>
           <SheetTrigger><Menu /></SheetTrigger>
           <SheetContent class="w-[400px] sm:w-[540px]">
-            <div class="flex flex-col gap-2 px-7 py-5 w-full">
+            <div class="flex flex-col gap-4 px-7 py-5 w-full">
               <template v-for="(link, index) in links" :key="index">
                 <RouterLink
                   v-if="link.label !== 'Logout'"
                   :to="link.href"
-                  class="text-xl font-medium"
-                  >{{ link.label }}</RouterLink
+                  class="flex gap-2 text-xl font-medium"
+                  ><component :is="link.icon"/> {{ link.label }}</RouterLink
                 >
                 <button
                   v-if="link.label === 'Logout'"
                   :to="link.href"
-                  class="text-xl text-destructive text-start font-medium"
+                  class="flex gap-2 text-xl text-destructive text-start font-medium"
                 >
-                  {{ link.label }}
+                <component :is="link.icon"/> {{ link.label }}
                 </button>
               </template>
             </div>
