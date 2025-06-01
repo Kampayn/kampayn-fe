@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { Phone, UserRound } from 'lucide-vue-next'
+import { LoaderCircle, Phone, UserRound } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -18,6 +19,8 @@ import {
 import { Button } from '@/components/ui/button'
 import KHeader from '@/components/KHeader.vue'
 import { useUserStore } from '@/stores/user'
+
+const router = useRouter()
 
 const userStore = useUserStore()
 const { isLoading } = storeToRefs(userStore)
@@ -53,13 +56,15 @@ const categories = [
   },
 ]
 
-const onSubmit = handleSubmit((values) => {
-  userStore.completeProfile({
+const onSubmit = handleSubmit(async (values) => {
+  const isSuccess = await userStore.completeProfile({
     role: 'brand',
     category: values.category,
     phone_number: values.phone,
     company: values.name,
   })
+
+  if (isSuccess) router.push('/')
 })
 </script>
 
@@ -119,9 +124,10 @@ const onSubmit = handleSubmit((values) => {
           </FormItem>
         </FormField>
 
-        <Button type="submit" size="lg" :disabled="!meta.valid || isLoading" class="w-full"
-          >Register</Button
-        >
+        <Button type="submit" size="lg" :disabled="!meta.valid || isLoading" class="w-full">
+          <LoaderCircle v-if="isLoading" class="animate-spin size-5 mr-2" />
+          <template v-else>Register</template>
+        </Button>
       </form>
     </div>
   </main>
