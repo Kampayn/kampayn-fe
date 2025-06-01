@@ -5,6 +5,7 @@ import type {
   GoogleParams,
   LoginParams,
   LoginResponse,
+  RefreshTokenResponse,
   RegisterParams,
   RegisterResponse,
 } from '@/types/auth'
@@ -20,6 +21,7 @@ interface AuthService {
   google: (
     params: GoogleParams,
   ) => Promise<Result<LoginResponse, string>>
+  refreshToken: (refreshToken: string) => Promise<Result<RefreshTokenResponse, string>>
 }
 
 const authService: AuthService = {
@@ -53,6 +55,16 @@ const authService: AuthService = {
       return { success: false, error: errorMessage }
     }
   },
+  refreshToken: async (refreshToken: string): Promise<Result<RefreshTokenResponse, string>> => {
+    try {
+      const response = await api.post<RefreshTokenResponse>('/auth/refresh-token', { refreshToken })
+      return { success: true, data: response.data }
+    } catch (error) {
+      const axiosError = error as AxiosError<ApiError>
+      const errorMessage = axiosError.response?.data?.message || 'Refresh token gagal'
+      return { success: false, error: errorMessage }
+    }
+  }
 }
 
 export default authService

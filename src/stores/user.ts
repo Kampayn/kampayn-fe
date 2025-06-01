@@ -70,6 +70,20 @@ export const useUserStore = defineStore('user', () => {
     // })
   }
 
+  const setTokens = (values: { access_token: string; refresh_token: string }) => {
+    access_token.value = values.access_token
+    refresh_token.value = values.refresh_token
+    localStorage.setItem(
+      'kampaiyn.auth.user',
+      JSON.stringify({
+        user: user.value,
+        access_token: values.access_token,
+        refresh_token: values.refresh_token,
+      }),
+    )
+    api.defaults.headers.common['Authorization'] = `Bearer ${values.access_token}`
+  }
+
   const login = async (params: LoginParams): Promise<boolean> => {
     isLoading.value = true
     try {
@@ -231,6 +245,7 @@ export const useUserStore = defineStore('user', () => {
     isLoggedIn,
     isGoogleLogin,
     setUser,
+    setTokens,
     login,
     google,
     register,

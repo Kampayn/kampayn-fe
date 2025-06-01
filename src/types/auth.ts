@@ -35,3 +35,11 @@ export interface RegisterResponse {
 export interface GoogleParams {
   idToken: string
 }
+
+export interface RefreshTokenResponse {
+  message: string
+  data: {
+    accessToken: string
+    refreshToken: string
+  }
+}
