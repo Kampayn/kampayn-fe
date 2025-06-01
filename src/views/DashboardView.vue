@@ -1,33 +1,40 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-
-import KHeader from '@/components/KHeader.vue'
 import { Plus, Search } from 'lucide-vue-next'
+import { storeToRefs } from 'pinia'
+
+import { useUserStore } from '@/stores/user'
+import KHeader from '@/components/KHeader.vue'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import KFooter from '@/components/KFooter.vue'
 import { Input } from '@/components/ui/input'
 
+const userStore = useUserStore()
+const { user } = storeToRefs(userStore)
+
 const campaigns = ref<number[]>([1, 2, 3])
 const newCampaigns = ref<number[]>([1, 2])
 </script>
 
 <template>
-  <KHeader :menus="['Dashboard', 'About']" variant="outline"/>
+  <KHeader :menus="['Dashboard', 'About']" variant="outline" />
 
   <!-- Main Content -->
   <main class="flex-1 container mx-auto px-4 py-8 mt-[72px]">
     <!-- Greeting -->
     <section class="text-center mb-16">
-      <h1 class="text-3xl font-semibold mb-2">Hello, Sinta!</h1>
-      <p class="text-gray-600">Selamat datang di dashboard pekerjaanmu</p>
+      <h1 class="text-3xl font-semibold mb-2">Hello, {{ user.name }}!</h1>
+      <p class="text-gray-600">
+        Selamat datang di dashboard {{ user.role === 'brand' ? 'bisnismu' : 'pekerjaanmu' }}
+      </p>
     </section>
 
     <!-- New Campaigns Section -->
     <section>
-      <div v-if="false" class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-semibold">New Campaigns</h2>
+      <div v-if="user.role === 'brand'" class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-semibold">Kampanye Anda</h2>
         <Button as-child>
           <RouterLink to="/create"> Create Campaign <Plus class="h-4 w-4" /> </RouterLink>
         </Button>
@@ -70,8 +77,8 @@ const newCampaigns = ref<number[]>([1, 2])
       </div>
     </section>
 
-    <!-- Campaign Section -->
-    <section v-if="true" class="my-16">
+    <!-- New Campaign Section -->
+    <section v-if="user.role === 'influencer'" class="my-16">
       <div class="flex justify-between items-center mb-6 w-full">
         <h2 class="text-2xl font-semibold">New Campaign</h2>
         <div class="w-full max-w-xs">
