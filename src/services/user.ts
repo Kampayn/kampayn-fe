@@ -12,7 +12,7 @@ interface UserService {
 const userService: UserService = {
   completeProfile: async (params: UserRoleParams) => {
     try {
-      const response = await api.post<UserResponse>('/user/complete-profile', params)
+      const response = await api.post<UserResponse>('/users/complete-profile', params)
       return { data: response.data, error: null }
     } catch (error) {
       return { data: null, error: error as AxiosError<ApiError> }
