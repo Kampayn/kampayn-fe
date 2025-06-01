@@ -1,5 +1,11 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+
+import { useUserStore } from '@/stores/user'
 import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Menu } from 'lucide-vue-next'
 
 interface Props {
   variant?: 'outline' | 'solid'
@@ -9,6 +15,20 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   variant: 'solid',
 })
+
+const userStore = useUserStore()
+const { isLoggedIn } = storeToRefs(userStore)
+
+const links = [
+  {
+    label: 'Profile',
+    href: '/profile',
+  },
+  {
+    label: 'Logout',
+    href: '/logout',
+  },
+]
 </script>
 
 <template>
@@ -37,8 +57,42 @@ withDefaults(defineProps<Props>(), {
         </Button>
       </div>
 
-      <div class="flex items-center space-x-4">
-        <slot></slot>
+      <div v-if="!isLoggedIn" class="flex items-center space-x-4">
+        <Button variant="outline" as-child>
+          <RouterLink to="/login">Masuk</RouterLink>
+        </Button>
+        <Button as-child>
+          <RouterLink to="/register">Daftar</RouterLink>
+        </Button>
+      </div>
+      <div v-else class="flex items-center space-x-2">
+        <Avatar class="size-7">
+          <AvatarImage src="https://github.com/unovue.png" alt="@unovue" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+
+        <Sheet>
+          <SheetTrigger><Menu /></SheetTrigger>
+          <SheetContent class="w-[400px] sm:w-[540px]">
+            <div class="flex flex-col gap-2 px-7 py-5 w-full">
+              <template v-for="(link, index) in links" :key="index">
+                <RouterLink
+                  v-if="link.label !== 'Logout'"
+                  :to="link.href"
+                  class="text-xl font-medium"
+                  >{{ link.label }}</RouterLink
+                >
+                <button
+                  v-if="link.label === 'Logout'"
+                  :to="link.href"
+                  class="text-xl text-destructive text-start font-medium"
+                >
+                  {{ link.label }}
+                </button>
+              </template>
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </nav>
   </header>

@@ -72,14 +72,7 @@ const workedTogether = ref([...bestForYou.value])
 </script>
 
 <template>
-  <KHeader :menus="['Dashboard', 'About']">
-    <Button variant="outline" as-child>
-      <RouterLink to="/login">Masuk</RouterLink>
-    </Button>
-    <Button as-child>
-      <RouterLink to="/register">Daftar</RouterLink>
-    </Button>
-  </KHeader>
+  <KHeader :menus="['Dashboard', 'About']" />
 
   <main class="container mx-auto px-4 py-12 mt-[72px]">
     <h1 class="text-3xl font-semibold mb-6">Rekomendasi Influencer</h1>

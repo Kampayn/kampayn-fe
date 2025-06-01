@@ -9,14 +9,7 @@ import { Badge } from '@/components/ui/badge'
 </script>
 
 <template>
-  <KHeader :menus="['Dashboard', 'About']">
-    <Button variant="outline" as-child>
-      <RouterLink to="/login">Masuk</RouterLink>
-    </Button>
-    <Button as-child>
-      <RouterLink to="/register">Daftar</RouterLink>
-    </Button>
-  </KHeader>
+  <KHeader :menus="['Dashboard', 'About']" />
 
   <main class="mt-[72px]">
     <!-- Hero Section -->

@@ -14,14 +14,7 @@ const newCampaigns = ref<number[]>([1, 2])
 </script>
 
 <template>
-  <KHeader :menus="['Dashboard', 'About']">
-    <Button variant="outline" as-child>
-      <RouterLink to="/login">Masuk</RouterLink>
-    </Button>
-    <Button as-child>
-      <RouterLink to="/register">Daftar</RouterLink>
-    </Button>
-  </KHeader>
+  <KHeader :menus="['Dashboard', 'About']" variant="outline"/>
 
   <!-- Main Content -->
   <main class="flex-1 container mx-auto px-4 py-8 mt-[72px]">
