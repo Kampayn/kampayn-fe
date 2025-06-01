@@ -100,11 +100,7 @@ router.beforeEach((to, from, next) => {
     // Redirect to login page with the intended destination as a query parameter
     next({ name: 'login' })
   } else {
-    if (!userStore.user.role && to.name === 'dashboard') {
-      next({ name: 'choose-account-type' })
-    } else {
-      next()
-    }
+    next()
   }
 })
 

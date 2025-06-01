@@ -10,21 +10,28 @@ import { useUserStore } from './stores/user'
 const router = useRouter()
 
 const userStore = useUserStore()
-const { isLoggedIn } = storeToRefs(userStore)
+const { isLoggedIn, user } = storeToRefs(userStore)
 
-watch(isLoggedIn, async(value) => {
-  if (value) {
-    const isSuccess = await userStore.fetchProfile()
+watch(
+  isLoggedIn,
+  async (value) => {
+    if (value) {
+      const isSuccess = await userStore.fetchProfile()
 
-    if (!isSuccess) {
+      if (!isSuccess) {
+        userStore.logout()
+        router.push('/login')
+      } else {
+        if (!user.value?.role) router.push({ name: 'choose-account-type' })
+      }
+    } else {
+      // TODO: Add logout logic here
       userStore.logout()
-      router.push('/login')
+      // router.push('/login')
     }
-  } else {
-    userStore.logout()
-    router.push('/login')
-  }
-})
+  },
+  { immediate: true },
+)
 </script>
 
 <template>

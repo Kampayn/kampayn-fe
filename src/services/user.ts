@@ -23,7 +23,7 @@ const userService: UserService = {
 
   fetchProfile: async (): Promise<Result<UserResponse, string>> => {
     try {
-      const response = await api.get<UserResponse>('/users/profile')
+      const response = await api.get<UserResponse>('/users/me')
       return { success: true, data: response.data }
     } catch (error) {
       const axiosError = error as AxiosError<ApiError>
