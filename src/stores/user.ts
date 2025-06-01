@@ -74,12 +74,12 @@ export const useUserStore = defineStore('user', () => {
     isLoading.value = true
     try {
       const result = await authService.login(params)
-      
+
       if (!result.success) {
         toast.error(result.error)
         return false
       }
-      
+
       toast.success(result.data.message || 'Login berhasil')
 
       if (!result.data.data) {
@@ -92,7 +92,7 @@ export const useUserStore = defineStore('user', () => {
         access_token: result.data.data.accessToken,
         refresh_token: result.data.data.refreshToken,
       })
-      
+
       return true
     } catch (error) {
       toast.error('Terjadi kesalahan saat login')
@@ -135,7 +135,7 @@ export const useUserStore = defineStore('user', () => {
       toast.success('Login dengan Google berhasil')
       console.log('user', result.data)
       isGoogleLogin.value = true
-      
+
       if (result.data.data?.user) {
         setUser({
           user: result.data.data.user,
@@ -143,7 +143,7 @@ export const useUserStore = defineStore('user', () => {
           refresh_token: result.data.data.refreshToken || '',
         })
       }
-      
+
       return true
     } catch (error) {
       toast.error('Terjadi kesalahan saat login dengan Google')
@@ -163,15 +163,39 @@ export const useUserStore = defineStore('user', () => {
         return false
       }
 
-      toast.success('Profil berhasil dilengkapi')
-      console.log(result.data)
+      toast.success(result.data.message)
+
       // Update user data if needed
-      // if (result.data.user) {
-      //   user.value = { ...user.value, ...result.data.user }
-      // }
+      if (result.data.data.user) {
+        user.value = { ...user.value, ...result.data.data.user }
+      }
       return true
     } catch (error) {
       toast.error('Terjadi kesalahan saat melengkapi profil')
+      console.log(error)
+      return false
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  const fetchProfile = async (): Promise<boolean> => {
+    isLoading.value = true
+    try {
+      const result = await userService.fetchProfile()
+      if (!result.success) {
+        toast.error(result.error)
+        return false
+      }
+      toast.success(result.data.message)
+      // Update user data if needed
+      if (result.data.data.user) {
+        user.value = { ...user.value, ...result.data.data.user }
+      }
+
+      return true
+    } catch (error) {
+      toast.error('Terjadi kesalahan saat mengambil data pengguna')
       console.log(error)
       return false
     } finally {
@@ -211,6 +235,7 @@ export const useUserStore = defineStore('user', () => {
     google,
     register,
     completeProfile,
+    fetchProfile,
     logout,
   }
 })

@@ -64,7 +64,7 @@ const onSubmit = handleSubmit(async (values) => {
     company: values.name,
   })
 
-  if (isSuccess) router.push('/')
+  if (isSuccess) router.push('/dashboard')
 })
 </script>
 

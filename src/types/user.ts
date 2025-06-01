@@ -46,5 +46,8 @@ export interface UserRoleParams {
 }
 
 export interface UserResponse {
-  user: User
+  message: string
+  data: {
+    user: User
+  }
 }
