@@ -2,50 +2,55 @@ import { AxiosError } from 'axios'
 
 import { api } from '@/lib/axios'
 import type {
-  ApiError,
   GoogleParams,
-  GoogleResponse,
   LoginParams,
   LoginResponse,
   RegisterParams,
   RegisterResponse,
 } from '@/types/auth'
+import type { Result, ApiError } from '@/types/common'
 
 interface AuthService {
   login: (
     params: LoginParams,
-  ) => Promise<{ data: LoginResponse | null; error: AxiosError<ApiError> | null }>
+  ) => Promise<Result<LoginResponse, string>>
   register: (
     params: RegisterParams,
-  ) => Promise<{ data: RegisterResponse | null; error: AxiosError<ApiError> | null }>
+  ) => Promise<Result<RegisterResponse, string>>
   google: (
     params: GoogleParams,
-  ) => Promise<{ data: GoogleResponse | null; error: AxiosError<ApiError> | null }>
+  ) => Promise<Result<LoginResponse, string>>
 }
 
 const authService: AuthService = {
-  login: async (params: LoginParams) => {
+  login: async (params: LoginParams): Promise<Result<LoginResponse, string>> => {
     try {
       const response = await api.post<LoginResponse>('/auth/login', params)
-      return { data: response.data, error: null }
+      return { success: true, data: response.data }
     } catch (error) {
-      return { data: null, error: error as AxiosError<ApiError> }
+      const axiosError = error as AxiosError<ApiError>
+      const errorMessage = axiosError.response?.data?.message || 'Login gagal'
+      return { success: false, error: errorMessage }
     }
   },
-  register: async (params: RegisterParams) => {
+  register: async (params: RegisterParams): Promise<Result<RegisterResponse, string>> => {
     try {
       const response = await api.post<RegisterResponse>('/auth/register', params)
-      return { data: response.data, error: null }
+      return { success: true, data: response.data }
     } catch (error) {
-      return { data: null, error: error as AxiosError<ApiError> }
+      const axiosError = error as AxiosError<ApiError>
+      const errorMessage = axiosError.response?.data?.message || 'Registrasi gagal'
+      return { success: false, error: errorMessage }
     }
   },
-  google: async (params: GoogleParams) => {
+  google: async (params: GoogleParams): Promise<Result<LoginResponse, string>> => {
     try {
-      const response = await api.post<GoogleResponse>('/auth/google', params)
-      return { data: response.data, error: null }
+      const response = await api.post<LoginResponse>('/auth/google', params)
+      return { success: true, data: response.data }
     } catch (error) {
-      return { data: null, error: error as AxiosError<ApiError> }
+      const axiosError = error as AxiosError<ApiError>
+      const errorMessage = axiosError.response?.data?.message || 'Login dengan Google gagal'
+      return { success: false, error: errorMessage }
     }
   },
 }

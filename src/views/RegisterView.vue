@@ -62,8 +62,10 @@ const handleGoogleSignUp = async () => {
 
     // Get ID token for backend validation
     const idToken = await userCredential.user.getIdToken()
-    userStore.google({ idToken })
-    router.push('/dashboard') // or wherever you want to redirect
+    const loginSuccess = await userStore.google({ idToken })
+
+    // Only redirect if login was successful
+    if (loginSuccess) router.push('/dashboard')
   } catch (error) {
     toast.error('Gagal login dengan Google')
     console.error('Google login failed:', error)
@@ -82,17 +84,19 @@ const onSubmit = handleSubmit(async (values) => {
     const actionCodeSettings = {
       url: 'https://kampayn.web.id/login', // Ganti dengan URL Anda
       handleCodeInApp: true,
-    };
+    }
 
     // Kirim email verifikasi
-    await sendEmailVerification(userCredential.user, actionCodeSettings);
+    await sendEmailVerification(userCredential.user, actionCodeSettings)
 
     // Get ID token for backend validation
-    userStore.register({
+    const registerSuccess = await userStore.register({
       name: values.username,
       email: values.email,
       password: values.password,
     })
+
+    if (registerSuccess) router.push('/login') // Redirect to login page after registration is successful
   } catch (error) {
     toast.error('Gagal membuat akun. Silakan coba lagi')
     console.error('Email registration error:', error)

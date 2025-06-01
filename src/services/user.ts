@@ -1,21 +1,22 @@
 import { AxiosError } from 'axios'
 
 import { api } from '@/lib/axios'
-import type { ApiError, UserResponse, UserRoleParams } from '@/types/user'
+import type { UserResponse, UserRoleParams } from '@/types/user'
+import type { Result, ApiError } from '@/types/common'
 
 interface UserService {
-  completeProfile: (
-    params: UserRoleParams,
-  ) => Promise<{ data: UserResponse | null; error: AxiosError<ApiError> | null }>
+  completeProfile: (params: UserRoleParams) => Promise<Result<UserResponse, string>>
 }
 
 const userService: UserService = {
-  completeProfile: async (params: UserRoleParams) => {
+  completeProfile: async (params: UserRoleParams): Promise<Result<UserResponse, string>> => {
     try {
       const response = await api.post<UserResponse>('/users/complete-profile', params)
-      return { data: response.data, error: null }
+      return { success: true, data: response.data }
     } catch (error) {
-      return { data: null, error: error as AxiosError<ApiError> }
+      const axiosError = error as AxiosError<ApiError>
+      const errorMessage = axiosError.response?.data?.message || 'Gagal melengkapi profil'
+      return { success: false, error: errorMessage }
     }
   },
 }

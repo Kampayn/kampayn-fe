@@ -48,8 +48,3 @@ export interface UserRoleParams {
 export interface UserResponse {
   user: User
 }
-
-export interface ApiError {
-  message: string
-  statusCode?: number
-}

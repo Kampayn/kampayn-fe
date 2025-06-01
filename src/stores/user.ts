@@ -70,91 +70,110 @@ export const useUserStore = defineStore('user', () => {
     // })
   }
 
-  const login = async (params: LoginParams) => {
+  const login = async (params: LoginParams): Promise<boolean> => {
     isLoading.value = true
     try {
-      const { data, error } = await authService.login(params)
-      if (error) {
-        toast.error('Login failed')
-        console.log(error)
-        console.log(data)
-        return
+      const result = await authService.login(params)
+      
+      if (!result.success) {
+        toast.error(result.error)
+        return false
       }
-      toast.success('Logged in successfully')
+      
+      toast.success(result.data.message || 'Login berhasil')
+
+      if (!result.data.data) {
+        toast.error('Data pengguna tidak ditemukan')
+        return false
+      }
 
       setUser({
-        user: data!.data!.user,
-        access_token: data!.data!.accessToken,
-        refresh_token: data!.data!.refreshToken,
+        user: result.data.data.user,
+        access_token: result.data.data.accessToken,
+        refresh_token: result.data.data.refreshToken,
       })
+      
+      return true
     } catch (error) {
-      toast.error('Login failed 2')
+      toast.error('Terjadi kesalahan saat login')
       console.log(error)
+      return false
     } finally {
       isLoading.value = false
     }
   }
 
-  const register = async (params: RegisterParams) => {
+  const register = async (params: RegisterParams): Promise<boolean> => {
     isLoading.value = true
     try {
-      const { data, error } = await authService.register(params)
-      if (error) {
-        toast.error('Registration failed')
-        console.log(error)
-        console.log(data)
-        return
+      const result = await authService.register(params)
+      if (!result.success) {
+        toast.error(result.error)
+        return false
       }
 
-      toast.success(data!.message)
+      toast.success(result.data.message)
+      return true
     } catch (error) {
-      toast.error('Registration failed 2')
+      toast.error('Terjadi kesalahan saat registrasi')
       console.log(error)
+      return false
     } finally {
       isLoading.value = false
     }
   }
 
-  const google = async (params: GoogleParams) => {
+  const google = async (params: GoogleParams): Promise<boolean> => {
     isLoading.value = true
     try {
-      const { data, error } = await authService.google(params)
-      if (error) {
-        toast.error('Google login failed')
-        console.log(error)
-        console.log(data)
-        return
+      const result = await authService.google(params)
+      if (!result.success) {
+        toast.error(result.error)
+        return false
       }
 
-      toast.success('Google login successful')
-      // setUser(data!.Data)
-      console.log('user', data)
+      toast.success('Login dengan Google berhasil')
+      console.log('user', result.data)
       isGoogleLogin.value = true
+      
+      if (result.data.data?.user) {
+        setUser({
+          user: result.data.data.user,
+          access_token: result.data.data.accessToken || '',
+          refresh_token: result.data.data.refreshToken || '',
+        })
+      }
+      
+      return true
     } catch (error) {
-      toast.error('Google login failed 2')
+      toast.error('Terjadi kesalahan saat login dengan Google')
       console.log(error)
+      return false
     } finally {
       isLoading.value = false
     }
   }
 
-  const completeProfile = async (params: UserRoleParams) => {
+  const completeProfile = async (params: UserRoleParams): Promise<boolean> => {
     isLoading.value = true
     try {
-      const { data, error } = await userService.completeProfile(params)
-      if (error) {
-        toast.error('Complete profile failed')
-        console.log(error)
-        console.log(data)
-        return
+      const result = await userService.completeProfile(params)
+      if (!result.success) {
+        toast.error(result.error)
+        return false
       }
 
-      toast.success('Complete profile successful')
-      console.log(data)
-      // setUser(data!.data!)
+      toast.success('Profil berhasil dilengkapi')
+      console.log(result.data)
+      // Update user data if needed
+      // if (result.data.user) {
+      //   user.value = { ...user.value, ...result.data.user }
+      // }
+      return true
     } catch (error) {
-      toast.error('Complete profile failed 2')
+      toast.error('Terjadi kesalahan saat melengkapi profil')
       console.log(error)
+      return false
     } finally {
       isLoading.value = false
     }

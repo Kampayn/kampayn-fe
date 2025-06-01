@@ -35,17 +35,3 @@ export interface RegisterResponse {
 export interface GoogleParams {
   idToken: string
 }
-
-export interface GoogleResponse {
-  statusCode: number
-  error?: string
-  message: string
-  data?: {
-    user: User
-  }
-}
-
-export interface ApiError {
-  message: string
-  statusCode?: number
-}

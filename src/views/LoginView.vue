@@ -47,8 +47,10 @@ const handleGoogleSignIn = async () => {
 
     // Get ID token for backend validation
     const idToken = await userCredential.user.getIdToken()
-    userStore.google({ idToken })
-    router.push('/dashboard') // or wherever you want to redirect
+    const loginSuccess = await userStore.google({ idToken })
+
+    // Only redirect if login was successful
+    if (loginSuccess) router.push('/dashboard')
   } catch (error) {
     toast.error('Gagal login dengan Google')
     console.error('Google login failed:', error)
@@ -66,9 +68,14 @@ const onSubmit = handleSubmit(async (values) => {
 
     // Get ID token for backend validation
     const idToken = await userCredential.user.getIdToken()
-    userStore.login({ email: values.email, password: values.password, idToken })
+    const loginSuccess = await userStore.login({
+      email: values.email,
+      password: values.password,
+      idToken,
+    })
 
-    router.push('/dashboard')
+    // Only redirect if login was successful
+    if (loginSuccess) router.push('/dashboard')
   } catch (error) {
     toast.error('Email atau password salah')
     console.error('Email/Password sign in error:', error)
