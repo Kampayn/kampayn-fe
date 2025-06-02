@@ -27,11 +27,10 @@
             <span class="text-xs font-medium text-blue-600">Applications</span>
           </div>
           <p class="text-lg font-bold text-blue-900">
-            {{ metrics.applications.accepted  }} Accepted
+            {{ metrics.applications.accepted }} Accepted
           </p>
           <p class="text-xs text-blue-700">
-            {{ metrics.applications.applied }} Apply •
-            {{ metrics.applications.rejected }} Reject
+            {{ metrics.applications.applied }} Apply • {{ metrics.applications.rejected }} Reject
           </p>
         </div>
 
@@ -40,9 +39,7 @@
             <FileText class="h-4 w-4 text-green-600" />
             <span class="text-xs font-medium text-green-600">Content</span>
           </div>
-          <p class="text-lg font-bold text-green-900">
-            {{ metrics.content.approved }} Approved
-          </p>
+          <p class="text-lg font-bold text-green-900">{{ metrics.content.approved }} Approved</p>
           <p class="text-xs text-green-700">
             {{ metrics.content.pending }} Pending • {{ metrics.content.rejected }} Reject
           </p>
@@ -104,14 +101,20 @@
     </CardContent>
 
     <CardFooter class="flex gap-2">
-      <Button @click="$router.push({ name: 'detail', params: { id: campaign.id } })" class="flex-1" size="sm">
+      <Button @click="$router.push({ name: 'detail', params: { id: campaign.id } })" class="flex-1">
         <Eye class="h-4 w-4 mr-1" />
         See Details
       </Button>
-      <Button class="flex-1" size="sm" variant="outline">
-        <Settings class="h-4 w-4 mr-1" />
-        Edit Campaign
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger as-child
+          ><Button size="icon" variant="outline">
+            <Settings class="h-4 w-4" /> </Button
+        ></DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem>Update</DropdownMenuItem>
+          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </CardFooter>
   </Card>
 </template>
@@ -119,22 +122,18 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
+import type { Campaign } from '@/types/campaign'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator' // Placeholder
-
-// Assuming lucide-vue-next for icons
+import { Separator } from '@/components/ui/separator'
+import { Calendar, DollarSign, Users, FileText, Settings, Eye, Clapperboard } from 'lucide-vue-next'
 import {
-  Calendar,
-  DollarSign,
-  Users,
-  FileText,
-  Settings,
-  Eye,
-  Clapperboard,
-} from 'lucide-vue-next'
-import type { Campaign } from '@/types/campaign'
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 interface CampaignMetrics {
   applications: {
