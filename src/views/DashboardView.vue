@@ -1,21 +1,41 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, watch } from 'vue'
 import { Plus, Search } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 
 import { useUserStore } from '@/stores/user'
+import { useCampaignStore } from '@/stores/campaign'
 import KHeader from '@/components/KHeader.vue'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import KFooter from '@/components/KFooter.vue'
 import { Input } from '@/components/ui/input'
+// import KCard from '@/components/KCard.vue'
+import KBrandCard from '@/components/KBrandCard.vue'
 
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
 
-const campaigns = ref<number[]>([1, 2, 3])
-const newCampaigns = ref<number[]>([1, 2])
+const campaignStore = useCampaignStore()
+const { campaigns } = storeToRefs(campaignStore)
+
+// const campaigns = ref<number[]>([1, 2, 3])
+// const newCampaigns = ref<number[]>([1, 2])
+
+watch(
+  () => user.value.role,
+  (role) => {
+    if (role === 'brand') {
+      campaignStore.get()
+    }
+  },
+)
+
+onMounted(() => {
+  if (user.value.role === 'brand') {
+    campaignStore.get()
+  }
+})
 </script>
 
 <template>
@@ -34,7 +54,7 @@ const newCampaigns = ref<number[]>([1, 2])
     <!-- New Campaigns Section -->
     <section>
       <div v-if="user.role === 'brand'" class="flex justify-between items-center mb-6">
-        <h2 class="text-xl font-semibold">Kampanye Anda</h2>
+        <h2 class="text-xl font-semibold">Campaign Anda</h2>
         <Button as-child>
           <RouterLink to="/create"> Create Campaign <Plus class="h-4 w-4" /> </RouterLink>
         </Button>
@@ -43,37 +63,30 @@ const newCampaigns = ref<number[]>([1, 2])
       <h2 v-else class="mb-6 text-2xl font-semibold">Ongoing Campaigns</h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Card
-          v-for="item in newCampaigns"
-          :key="item"
-          @click="$router.push({ name: 'detail', params: { id: item } })"
+        <KBrandCard
+          v-for="(item, index) in campaigns"
+          :key="index"
+          :campaign="item"
+          :metrics="{
+            applications: {
+              applied: 10,
+              accepted: 999,
+              rejected: 3 
+            },
+            content: {
+              pending: 10,
+              approved: 999,
+              rejected: 3,
+            }
+          }"
+        />
+        <!-- <KCard
+          v-for="(item, index) in campaigns"
+          :key="index"
+          @click="$router.push({ name: 'detail', params: { id: item.id } })"
+          v-bind="item"
           class="overflow-hidden cursor-pointer"
-        >
-          <div class="bg-gray-100 h-48 flex items-center justify-center text-gray-400">Pict</div>
-          <div class="p-4">
-            <h3 class="font-semibold mb-1">Kacang Tanah</h3>
-            <p class="text-gray-500 text-sm mb-2">Rinrain Store • Product Launch</p>
-
-            <div class="flex gap-2 mb-3">
-              <Badge variant="outline" class="bg-gray-50 text-gray-600 rounded-full font-normal">
-                Food
-              </Badge>
-              <Badge variant="outline" class="bg-gray-50 text-gray-600 rounded-full font-normal">
-                Healthy
-              </Badge>
-            </div>
-
-            <p class="text-gray-600 text-sm mb-3">Timeline: 10 - 20 Juni 2024</p>
-
-            <Button
-              variant="outline"
-              size="sm"
-              class="bg-green-50 border-green-100 text-gray-800 text-xs"
-            >
-              Mulai dari Rp2 Juta
-            </Button>
-          </div>
-        </Card>
+        /> -->
       </div>
     </section>
 
@@ -89,7 +102,7 @@ const newCampaigns = ref<number[]>([1, 2])
       </div>
 
       <div class="space-y-4">
-        <Card v-for="item in campaigns" :key="item" class="overflow-hidden">
+        <Card v-for="(item, index) in campaigns" :key="index" class="overflow-hidden">
           <div class="flex flex-col sm:flex-row">
             <div
               class="bg-gray-100 w-full sm:w-48 h-48 sm:h-auto flex items-center justify-center text-gray-400"

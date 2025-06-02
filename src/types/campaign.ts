@@ -15,7 +15,7 @@ interface BrandUser {
   brandProfile: BrandProfile
 }
 
-interface Campaign {
+export interface Campaign {
   id: string
   user_id: string
   campaign_name: string

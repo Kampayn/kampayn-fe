@@ -1,11 +1,11 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import type { CreateParams } from '@/types/campaign'
+import type { Campaign, CreateParams } from '@/types/campaign'
 import campaignService from '@/services/campaign'
 import { toast } from 'vue-sonner'
 
 export const useCampaignStore = defineStore('campaign', () => {
-  const campaign = ref(null)
+  const campaigns = ref<Campaign[]>([])
   const isLoading = ref(false)
 
   const create = async (params: CreateParams): Promise<boolean> => {
@@ -29,5 +29,22 @@ export const useCampaignStore = defineStore('campaign', () => {
     }
   }
 
-  return { campaign, isLoading, create }
+  const get = async (): Promise<void> => {
+    isLoading.value = true
+    try {
+      const result = await campaignService.get()
+      if (!result.success) {
+        toast.error(result.error)
+        return
+      }
+      campaigns.value = result.data.data.campaigns
+    } catch (error) {
+      toast.error('Terjadi kesalahan saat mengambil campaign')
+      console.log(error)
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  return { campaigns, isLoading, create, get }
 })
