@@ -41,38 +41,29 @@ import { RangeCalendar } from '@/components/ui/range-calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { useCampaignStore } from '@/stores/campaign'
+import { storeToRefs } from 'pinia'
+import { toast } from 'vue-sonner'
+import { useRouter } from 'vue-router'
 
-// Types
-interface CampaignFormData {
-  campaignName: string
-  campaignType: 'brandAwareness' | 'productLaunch' | 'promoSale' | 'other'
-  productStory: string
-  keyMessage: string
-  contentDos: string
-  contentDonts: string
-  platforms: string[]
-  influencerType: string[]
-  contentType: 'story' | 'post' | 'reels' | 'live'
-  totalInfluencer: number
-  budget: number
-  paymentMethod: 'securePayment' | 'directTransfer'
-  startDate: Date
-  endDate: Date
-}
+const router = useRouter()
+
+const campaignStore = useCampaignStore()
+const { isLoading } = storeToRefs(campaignStore)
 
 // Constants
 const CAMPAIGN_TYPE_OPTIONS = [
   {
     label: 'Brand Awareness',
-    value: 'brandAwareness',
+    value: 'brand_awareness',
     description: 'Increase brand visibility and recognition',
   },
   {
     label: 'Product Launch',
-    value: 'productLaunch',
+    value: 'product_launch',
     description: 'Introduce new products to market',
   },
-  { label: 'Promo/Sale', value: 'promoSale', description: 'Drive sales and conversions' },
+  { label: 'Promo/Sale', value: 'promo_sale', description: 'Drive sales and conversions' },
   { label: 'Other', value: 'other', description: 'Custom campaign objectives' },
 ] as const
 
@@ -89,7 +80,7 @@ const PLATFORM_OPTIONS = [
   { label: 'YouTube', id: 'youtube', icon: '📹' },
 ] as const
 
-const INFLUENCER_TYPE_OPTIONS = [
+const INFLUENCER_TIER_OPTIONS = [
   {
     label: 'Nano',
     value: 'nano',
@@ -119,48 +110,42 @@ const INFLUENCER_TYPE_OPTIONS = [
 const PAYMENT_METHOD_OPTIONS = [
   {
     label: 'Secure Payment',
-    value: 'securePayment',
+    value: 'secure_payment',
     description: 'Protected by platform guarantee',
   },
-  { label: 'Direct Transfer', value: 'directTransfer', description: 'Direct bank transfer' },
+  { label: 'Bank Transfer', value: 'bank_transfer', description: 'Direct bank transfer' },
 ] as const
 
 // Validation schema with enhanced rules
 const formSchema = toTypedSchema(
   z
     .object({
-      campaignName: z
+      campaign_name: z
         .string()
         .min(3, 'Campaign name must be at least 3 characters')
         .max(100, 'Campaign name must not exceed 100 characters')
         .regex(/^[a-zA-Z0-9\s\-_]+$/, 'Campaign name contains invalid characters'),
-      campaignType: z.enum(['brandAwareness', 'productLaunch', 'promoSale', 'other']),
-      productStory: z
+      campaign_type: z.enum(['brand_awareness', 'product_launch', 'promo_sale', 'other']),
+      product_story: z
         .string()
         .min(20, 'Product story must be at least 20 characters')
         .max(1000, 'Product story must not exceed 1000 characters'),
-      keyMessage: z
+      key_message: z
         .string()
         .min(10, 'Key message must be at least 10 characters')
         .max(500, 'Key message must not exceed 500 characters'),
-      contentDos: z
-        .string()
-        .min(5, 'Content dos must be at least 5 characters')
-        .max(500, 'Content dos must not exceed 500 characters'),
-      contentDonts: z
-        .string()
-        .min(5, 'Content donts must be at least 5 characters')
-        .max(500, 'Content donts must not exceed 500 characters'),
+      content_dos: z.string().min(10, 'Content dos must be at least 10 characters'),
+      content_donts: z.string().min(10, 'Content donts must be at least 10 characters'),
       platforms: z
         .array(z.string())
         .min(1, 'Select at least one platform')
         .max(3, 'Maximum 3 platforms allowed'),
-      influencerType: z
+      influencer_tiers: z
         .array(z.string())
         .min(1, 'Select at least one influencer type')
         .max(4, 'Maximum 4 influencer types allowed'),
-      contentType: z.enum(['story', 'post', 'reels', 'live']),
-      totalInfluencer: z
+      content_types: z.enum(['story', 'post', 'reels', 'live']),
+      influencers_needed: z
         .number()
         .min(1, 'Minimum 1 influencer required')
         .max(100, 'Maximum 100 influencers allowed')
@@ -169,23 +154,28 @@ const formSchema = toTypedSchema(
         .number()
         .min(10000, 'Minimum budget is IDR 10,000')
         .max(99999999, 'Maximum budget is IDR 99,999,999'),
-      paymentMethod: z.enum(['securePayment', 'directTransfer']),
-      startDate: z.date(),
-      endDate: z.date(),
+      payment_method: z.enum(['secure_payment', 'bank_transfer']),
+      start_date: z.string(),
+      end_date: z.string(),
+      status: z
+        .enum(['draft', 'published', 'pending_review', 'active', 'completed', 'cancelled'])
+        .default('draft'),
     })
-    .refine((data) => data.endDate > data.startDate, {
+    .refine((data) => new Date(data.end_date) > new Date(data.start_date), {
       message: 'End date must be after start date',
-      path: ['endDate'],
+      path: ['end_date'],
     })
     .refine(
       (data) => {
-        const diffTime = Math.abs(data.endDate.getTime() - data.startDate.getTime())
+        const diffTime = Math.abs(
+          new Date(data.end_date).getTime() - new Date(data.start_date).getTime(),
+        )
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
         return diffDays >= 1 && diffDays <= 365
       },
       {
         message: 'Campaign duration must be between 1 day and 1 year',
-        path: ['endDate'],
+        path: ['end_date'],
       },
     ),
 )
@@ -196,7 +186,6 @@ const df = new DateFormatter('id-ID', {
 })
 
 // Reactive state
-const isSubmitting = ref(false)
 const isDraftSaving = ref(false)
 const start = today(getLocalTimeZone())
 const end = start.add({ days: 7 })
@@ -210,21 +199,15 @@ const dateRange = ref({
 const { isFieldDirty, handleSubmit, values, errors, setFieldValue, resetForm, meta } = useForm({
   validationSchema: formSchema,
   initialValues: {
-    campaignName: '',
-    campaignType: undefined,
-    productStory: '',
-    keyMessage: '',
-    contentDos: '',
-    contentDonts: '',
-    platforms: [],
-    influencerType: [],
-    contentType: undefined,
-    totalInfluencer: 1,
+    influencers_needed: 1,
     budget: 100000,
-    paymentMethod: 'directTransfer' as const,
-    startDate: start.toDate('utc'),
-    endDate: end.toDate('utc'),
-  } as Partial<CampaignFormData>,
+    payment_method: 'bank_transfer' as const,
+    start_date: start.toDate('utc').toISOString().split('T')[0],
+    end_date: end.toDate('utc').toISOString().split('T')[0],
+    status: 'draft' as const,
+    platforms: [],
+    influencer_tiers: [],
+  },
 })
 
 // Computed properties
@@ -241,7 +224,7 @@ const campaignDuration = computed(() => {
 })
 
 const estimatedBudgetPerInfluencer = computed(() => {
-  const total = values.totalInfluencer || 1
+  const total = values.influencers_needed || 1
   const budget = values.budget || 0
   return Math.floor(budget / total)
 })
@@ -251,10 +234,10 @@ watch(
   dateRange,
   (newRange) => {
     if (newRange.start) {
-      setFieldValue('startDate', newRange.start.toDate('utc'))
+      setFieldValue('start_date', newRange.start.toDate('utc').toISOString().split('T')[0])
     }
     if (newRange.end) {
-      setFieldValue('endDate', newRange.end.toDate('utc'))
+      setFieldValue('end_date', newRange.end.toDate('utc').toISOString().split('T')[0])
     }
   },
   { deep: true },
@@ -263,15 +246,29 @@ watch(
 // Methods
 const onSubmit = handleSubmit(async (vals) => {
   try {
-    isSubmitting.value = true
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
+    isLoading.value = true
     console.log('Campaign Data:', vals)
 
-    // Show success message
-    alert('Campaign published successfully! 🎉')
+    const isSuccess = await campaignStore.create({
+      ...vals,
+      content_dos: vals.content_dos
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0),
+      content_donts: vals.content_donts
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0),
+      content_types: [vals.content_types],
+    })
+
+    if (!isSuccess) {
+      toast.error('Failed to create campaign. Please try again.')
+      return
+    }
+
+    toast.success('Campaign created successfully!')
+    router.push('/dashboard')
 
     // Reset form
     resetForm()
@@ -280,7 +277,7 @@ const onSubmit = handleSubmit(async (vals) => {
     console.error('Error submitting campaign:', error)
     alert('Failed to publish campaign. Please try again.')
   } finally {
-    isSubmitting.value = false
+    isLoading.value = false
   }
 })
 
@@ -302,7 +299,7 @@ const onSaveDraft = async () => {
 }
 
 const handleInfluencerTypeToggle = (type: string) => {
-  const currentTypes = values.influencerType || []
+  const currentTypes = values.influencer_tiers || []
   let newTypes: string[]
 
   if (currentTypes.includes(type)) {
@@ -311,7 +308,7 @@ const handleInfluencerTypeToggle = (type: string) => {
     newTypes = [...currentTypes, type]
   }
 
-  setFieldValue('influencerType', newTypes)
+  setFieldValue('influencer_tiers', newTypes)
 }
 
 const formatCurrency = (amount: number) => {
@@ -354,7 +351,7 @@ const formatCurrency = (amount: number) => {
           <!-- Campaign Name -->
           <FormField
             v-slot="{ componentField }"
-            name="campaignName"
+            name="campaign_name"
             :validate-on-blur="!isFieldDirty"
           >
             <FormItem>
@@ -376,7 +373,7 @@ const formatCurrency = (amount: number) => {
           <!-- Campaign Type -->
           <FormField
             v-slot="{ value, handleChange }"
-            name="campaignType"
+            name="campaign_type"
             :validate-on-blur="!isFieldDirty"
           >
             <FormItem>
@@ -420,7 +417,7 @@ const formatCurrency = (amount: number) => {
           <!-- Product Story -->
           <FormField
             v-slot="{ componentField }"
-            name="productStory"
+            name="product_story"
             :validate-on-blur="!isFieldDirty"
           >
             <FormItem>
@@ -442,7 +439,7 @@ const formatCurrency = (amount: number) => {
           <!-- Key Message -->
           <FormField
             v-slot="{ componentField }"
-            name="keyMessage"
+            name="key_message"
             :validate-on-blur="!isFieldDirty"
           >
             <FormItem>
@@ -474,7 +471,7 @@ const formatCurrency = (amount: number) => {
               <!-- Content Dos -->
               <FormField
                 v-slot="{ componentField }"
-                name="contentDos"
+                name="content_dos"
                 :validate-on-blur="!isFieldDirty"
               >
                 <FormItem>
@@ -493,7 +490,7 @@ const formatCurrency = (amount: number) => {
               <!-- Content Donts -->
               <FormField
                 v-slot="{ componentField }"
-                name="contentDonts"
+                name="content_donts"
                 :validate-on-blur="!isFieldDirty"
               >
                 <FormItem>
@@ -583,10 +580,10 @@ const formatCurrency = (amount: number) => {
               <FormDescription>Select the influencer tiers you want to work with</FormDescription>
               <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <Button
-                  v-for="type in INFLUENCER_TYPE_OPTIONS"
+                  v-for="type in INFLUENCER_TIER_OPTIONS"
                   :key="type.value"
                   type="button"
-                  :variant="values.influencerType?.includes(type.value) ? 'default' : 'outline'"
+                  :variant="values.influencer_tiers?.includes(type.value) ? 'default' : 'outline'"
                   class="h-auto p-4 flex flex-col items-center space-y-2"
                   @click="handleInfluencerTypeToggle(type.value)"
                 >
@@ -601,7 +598,7 @@ const formatCurrency = (amount: number) => {
           </FormField>
 
           <!-- Content Type -->
-          <FormField v-slot="{ value, handleChange }" name="contentType">
+          <FormField v-slot="{ value, handleChange }" name="content_types">
             <FormItem>
               <FormLabel>Content Type *</FormLabel>
               <FormControl>
@@ -630,7 +627,7 @@ const formatCurrency = (amount: number) => {
           </FormField>
 
           <!-- Total Influencer -->
-          <FormField v-slot="{ value }" name="totalInfluencer" :validate-on-blur="!isFieldDirty">
+          <FormField v-slot="{ value }" name="influencers_needed" :validate-on-blur="!isFieldDirty">
             <FormItem>
               <FormLabel>Total Influencers *</FormLabel>
               <NumberField
@@ -638,7 +635,7 @@ const formatCurrency = (amount: number) => {
                 :min="1"
                 :max="100"
                 :model-value="value"
-                @update:model-value="(v) => setFieldValue('totalInfluencer', v || 1)"
+                @update:model-value="(v) => setFieldValue('influencers_needed', v || 1)"
               >
                 <NumberFieldContent>
                   <NumberFieldDecrement />
@@ -695,7 +692,7 @@ const formatCurrency = (amount: number) => {
                 <div class="space-y-1">
                   <p>Total budget for the entire campaign (IDR 10K - 99.9M)</p>
                   <p
-                    v-if="values.totalInfluencer && values.budget"
+                    v-if="values.influencers_needed && values.budget"
                     class="text-teal-600 font-medium"
                   >
                     ≈ {{ formatCurrency(estimatedBudgetPerInfluencer) }} per influencer
@@ -709,7 +706,7 @@ const formatCurrency = (amount: number) => {
           <!-- Payment Method -->
           <FormField
             v-slot="{ componentField }"
-            name="paymentMethod"
+            name="payment_method"
             :validate-on-blur="!isFieldDirty"
           >
             <FormItem>
@@ -784,7 +781,7 @@ const formatCurrency = (amount: number) => {
                   </div>
                 </PopoverContent>
               </Popover>
-              <FormMessage>{{ errors.startDate || errors.endDate }}</FormMessage>
+              <FormMessage>{{ errors.start_date || errors.end_date }}</FormMessage>
             </FormItem>
           </FormField>
         </CardContent>
@@ -819,10 +816,10 @@ const formatCurrency = (amount: number) => {
               <Button
                 type="submit"
                 class="bg-teal-600 hover:bg-teal-700"
-                :disabled="!isFormValid || isSubmitting"
+                :disabled="!isFormValid || isLoading"
               >
-                <Loader2 v-if="isSubmitting" class="mr-2 h-4 w-4 animate-spin" />
-                {{ isSubmitting ? 'Publishing...' : 'Publish Campaign' }}
+                <Loader2 v-if="isLoading" class="mr-2 h-4 w-4 animate-spin" />
+                {{ isLoading ? 'Publishing...' : 'Publish Campaign' }}
               </Button>
             </div>
           </div>
