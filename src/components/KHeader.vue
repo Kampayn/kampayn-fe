@@ -50,7 +50,7 @@ const links = [
   >
     <nav class="container mx-auto flex flex-row items-center justify-between py-4 px-4">
       <div class="flex items-center">
-        <RouterLink to="/" class="flex items-center">
+        <RouterLink :to="isLoggedIn ? '/dashboard' : '/'" class="flex items-center">
           <img
             src="/assets/logo/logo.svg"
             alt="Kampaiyn Logo"

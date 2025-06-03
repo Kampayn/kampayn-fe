@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { RouterLink, useRoute, useRouter } from 'vue-router'
-import {
-  ArrowLeft,
-  Calculator,
-} from 'lucide-vue-next'
+import { useRoute, useRouter } from 'vue-router'
+import { Calculator, Calendar, CheckCircle, Notebook, NotebookPen, ReceiptText, XCircle } from 'lucide-vue-next'
 import { useCampaignStore } from '@/stores/campaign'
 import { storeToRefs } from 'pinia'
 import { toast } from 'vue-sonner'
+import dayjs from 'dayjs'
 
 import KFooter from '@/components/KFooter.vue'
 import KHeader from '@/components/KHeader.vue'
@@ -22,6 +20,7 @@ import KApplyCard from '@/components/KApplyCard.vue'
 import KAnalysis from '@/components/KAnalysisResult.vue'
 import type { ReviewRow } from '@/types/review'
 import KReviewTask from '@/components/KReviewTask.vue'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 const router = useRouter()
 const route = useRoute()
@@ -31,7 +30,7 @@ const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
 
 const campaignStore = useCampaignStore()
-// const { isLoading, currentCampaign } = storeToRefs(campaignStore)
+const { isLoading, currentCampaign } = storeToRefs(campaignStore)
 
 // Types
 
@@ -169,20 +168,6 @@ onMounted(async () => {
   <KHeader variant="outline" />
 
   <main class="flex-1 container mx-auto px-4 py-8 mt-[72px] max-w-7xl">
-    <!-- Header & Back Button -->
-    <div class="mb-8 flex items-start md:items-center gap-4">
-      <RouterLink
-        to="/dashboard"
-        class="mt-1 text-gray-600 hover:text-gray-900 transition-colors flex items-center"
-      >
-        <ArrowLeft class="h-5 w-5" />
-        <span class="sr-only">Back to campaigns</span>
-      </RouterLink>
-      <h1 class="text-2xl md:text-3xl font-bold text-gray-900">
-        {{ campaignInfo.title }}
-      </h1>
-    </div>
-
     <!-- Campaign Info Section -->
     <div class="grid gap-8 lg:grid-cols-2">
       <!-- Campaign Image Placeholder -->
@@ -197,44 +182,91 @@ onMounted(async () => {
 
       <!-- Campaign Details -->
       <div class="space-y-6">
+        <div class="flex flex-col gap-2">
+          <h1 class="text-2xl font-bold text-gray-900">
+            {{ campaignInfo.title }}
+          </h1>
+          <p class="text-gray-600">
+            {{ currentCampaign?.campaign_type }} • Created on
+            {{ dayjs(currentCampaign?.createdAt).format('MMM DD, YYYY') }}
+          </p>
+        </div>
+
         <div>
-          <h2 class="text-xl font-semibold mb-4">Campaign Details</h2>
-          <div class="space-y-3">
-            <div class="space-x-3">
-              <span class="font-medium text-gray-700">Tipe Kampanye :</span>
-              <span class="text-gray-900">{{ campaignInfo.type }}</span>
+          <div class="flex items-center gap-2 mb-4">
+            <NotebookPen class="text-gray-500" />
+            <h2 class="text-lg font-semibold">Campaign Details</h2>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <p class="text-sm font-medium text-gray-500">Content Type</p>
+              <p>{{ currentCampaign?.content_types.join(',') }}</p>
             </div>
-            <div class="space-x-3">
-              <span class="font-medium text-gray-700">Platform :</span>
-              <span class="text-gray-900">{{ campaignInfo.platform }}</span>
+            <div class="space-y-1">
+              <p class="text-sm font-medium text-gray-500">Platform</p>
+              <p>{{ currentCampaign?.platforms.join(',') }}</p>
             </div>
-            <div class="space-x-3">
-              <span class="font-medium text-gray-700">Influencer Tier :</span>
-              <span class="text-gray-900">{{ campaignInfo.influencerTier }}</span>
-            </div>
-            <div class="space-x-3">
-              <span class="font-medium text-gray-700">Total Needed :</span>
-              <span class="text-gray-900">{{ campaignInfo.totalInfluencers }}</span>
-            </div>
-            <div class="space-x-3">
-              <span class="font-medium text-gray-700">Timeline :</span>
-              <span class="text-gray-900">{{ campaignInfo.timeline }}</span>
-            </div>
-            <div class="space-x-3">
-              <span class="font-medium text-gray-700">Anggaran :</span>
-              <span class="text-gray-900">Rp. 1.000.000,00</span>
-            </div>
-            <div class="flex space-x-3">
-              <span class="font-medium text-gray-700">Kategori :</span>
-              <div class="flex flex-wrap gap-2">
+            <div class="space-y-1">
+              <p class="text-sm font-medium text-gray-500">Influencer Tier</p>
+              <div class="flex gap-2">
                 <Badge
-                  v-for="tag in campaignInfo.tags"
-                  :key="tag"
-                  variant="secondary"
-                  class="bg-green-50 text-green-800 hover:bg-green-100"
+                  v-for="(item, index) in currentCampaign?.influencer_tiers"
+                  :key="index"
+                  variant="outline"
                 >
-                  {{ tag }}
+                  {{ item }}
                 </Badge>
+              </div>
+            </div>
+            <div class="space-y-1">
+              <p class="text-sm font-medium text-gray-500">Total Needed</p>
+              <p>{{ currentCampaign?.influencers_needed }} Influencer</p>
+            </div>
+            <div class="space-y-1">
+              <p class="text-sm font-medium text-gray-500">Timeline</p>
+              <div class="flex items-center gap-1">
+                <Calendar class="h-4 w-4 text-gray-500" />
+                <p>
+                  {{ dayjs(currentCampaign?.createdAt).format('DD MMM YYYY') }} -
+                  {{ dayjs(currentCampaign?.updatedAt).format('DD MMM YYYY') }}
+                </p>
+              </div>
+            </div>
+            <div class="space-y-1">
+              <p class="text-sm font-medium text-gray-500">Payment Method</p>
+              <p>{{ currentCampaign?.payment_method }}</p>
+            </div>
+            <div class="space-y-1">
+              <p class="text-sm font-medium text-gray-500">Status</p>
+              <Badge
+                :variant="
+                  currentCampaign?.status === 'cancelled'
+                    ? 'destructive'
+                    : currentCampaign?.status === 'active'
+                      ? 'default'
+                      : 'secondary'
+                "
+                >{{ currentCampaign?.status }}</Badge
+              >
+            </div>
+            <div class="space-y-1">
+              <p class="text-sm font-medium text-gray-500">Budget</p>
+              <p>Rp. {{ currentCampaign?.budget }}</p>
+            </div>
+            <div v-if="currentCampaign?.brandUser" class="col-span-2 md:col-auto space-y-1">
+              <div class="flex items-center gap-3 border px-4 py-2 w-full rounded-lg">
+                <Avatar class="size-8">
+                  <AvatarImage src="https://github.com/unovue.png" alt="@unovue" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+
+                <div class="flex flex-col">
+                  <span>{{ currentCampaign?.brandUser?.name }}</span>
+                  <span class="text-sm text-gray-500">
+                    {{ currentCampaign?.brandUser?.brandProfile.company }} •
+                    {{ currentCampaign?.brandUser?.brandProfile.category }}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -247,16 +279,49 @@ onMounted(async () => {
     <!-- Brief Section -->
     <Card class="mb-8 grid-cols-3">
       <CardHeader>
-        <CardTitle class="flex items-center gap-2">
-          <span>📋</span>
+        <CardTitle class="flex items-center gap-2 text-lg">
+          <ReceiptText class="text-gray-500" />
           Campaign Brief
         </CardTitle>
       </CardHeader>
       <CardContent class="space-y-6">
-        <div v-for="(section, index) in briefSections" :key="index">
+        <div>
+          <h3 class="font-semibold text-gray-900 mb-3">Product Story</h3>
+          <p class="text-gray-700 leading-relaxed">{{ currentCampaign?.product_story }}</p>
+        </div>
+        <Separator />
+        <div>
+          <h3 class="font-semibold text-gray-900 mb-3">Key Message</h3>
+          <p class="text-gray-700 leading-relaxed">{{ currentCampaign?.key_message }}</p>
+        </div>
+        <Separator />
+        <div>
+          <h3 class="font-semibold text-gray-900 mb-3">Campaign Guidelines</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-6">
+            <div class="bg-green-50 rounded-lg p-4">
+              <div class="flex items-center gap-2 mb-3">
+                <CheckCircle class="h-5 w-5 text-green-600" />
+                <h3 class="font-semibold text-green-800">Do's</h3>
+              </div>
+              <ul class="space-y-2 text-gray-700 list-disc">
+                <li v-for="(item, index) in currentCampaign?.content_dos" :key="index" class="ml-6">{{ item }}</li>
+              </ul>
+            </div>
+
+            <div class="bg-red-50 rounded-lg p-4">
+              <div class="flex items-center gap-2 mb-3">
+                <XCircle class="h-5 w-5 text-red-600" />
+                <h3 class="font-semibold text-red-800">Don'ts</h3>
+              </div>
+              <ul class="space-y-2 text-gray-700 list-disc">
+                <li v-for="(item, index) in currentCampaign?.content_donts" :key="index" class="ml-6">{{ item }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!-- <div v-for="(section, index) in briefSections" :key="index">
           <h3 class="font-semibold text-gray-900 mb-3">{{ section.title }}</h3>
 
-          <!-- Handle different content types -->
           <div v-if="Array.isArray(section.content)" class="space-y-2">
             <ul
               v-if="section.title === 'Key Message'"
@@ -277,12 +342,12 @@ onMounted(async () => {
           <p v-else class="text-gray-700 leading-relaxed">{{ section.content }}</p>
 
           <Separator v-if="index < briefSections.length - 1" class="mt-6" />
-        </div>
+        </div> -->
       </CardContent>
     </Card>
 
     <!-- Review Task Section -->
-    <KReviewTask v-if="user.role === 'brand'" :rows="rows"/>
+    <KReviewTask v-if="user.role === 'brand'" :rows="rows" />
 
     <!-- Campaign Analysis Form -->
     <Card class="mb-8" v-if="false">
@@ -337,7 +402,7 @@ onMounted(async () => {
       </CardContent>
     </Card>
 
-    <KAnalysis v-if="isCalculated && isFormValid" :roiValue="roiValue" :cacValue="cacValue"/>
+    <KAnalysis v-if="isCalculated && isFormValid" :roiValue="roiValue" :cacValue="cacValue" />
 
     <KApplyCard v-if="false" />
 
