@@ -1,14 +1,23 @@
 import { AxiosError } from 'axios'
 
 import { api } from '@/lib/axios'
-import type { CampaignResponse, CreateParams, CreateResponse, GetParams, GetResponse } from '@/types/campaign'
+import type {
+  CampaignResponse,
+  CreateParams,
+  CreateResponse,
+  GetParams,
+  GetResponse,
+} from '@/types/campaign'
 import type { Result, ApiError } from '@/types/common'
 
 interface CampaignService {
   post: (params: CreateParams) => Promise<Result<CreateResponse, string>>
   getAll: (params?: GetParams) => Promise<Result<GetResponse, string>>
   getMy: (params?: GetParams) => Promise<Result<GetResponse, string>>
-  getById: (id: string, for_role: 'brand' | 'influencer') => Promise<Result<CampaignResponse, string>>
+  getById: (
+    id: string,
+    for_role: 'brand' | 'influencer',
+  ) => Promise<Result<CampaignResponse, string>>
   put: (id: string, params: CreateParams) => Promise<Result<CreateResponse, string>>
   delete: (id: string) => Promise<Result<CreateResponse, string>>
 }
@@ -44,7 +53,10 @@ const campaignService: CampaignService = {
       return { success: false, error: errorMessage }
     }
   },
-  getById: async (id: string, for_role: 'brand' | 'influencer'): Promise<Result<CampaignResponse, string>> => {
+  getById: async (
+    id: string,
+    for_role: 'brand' | 'influencer',
+  ): Promise<Result<CampaignResponse, string>> => {
     try {
       const response = await api.get<CampaignResponse>(`/campaigns/${id}?for_role=${for_role}`)
       return { success: true, data: response.data }
@@ -59,7 +71,7 @@ const campaignService: CampaignService = {
       const response = await api.put<CreateResponse>(`/campaigns/${id}`, params)
       return { success: true, data: response.data }
     } catch (error) {
-      const axiosError = error as AxiosError<ApiError>  
+      const axiosError = error as AxiosError<ApiError>
       const errorMessage = axiosError.response?.data?.message || 'Gagal mengubah campaign'
       return { success: false, error: errorMessage }
     }
@@ -73,7 +85,7 @@ const campaignService: CampaignService = {
       const errorMessage = axiosError.response?.data?.message || 'Gagal menghapus campaign'
       return { success: false, error: errorMessage }
     }
-  }
+  },
 }
 
 export default campaignService

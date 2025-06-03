@@ -299,7 +299,10 @@ watch(
       setFieldValue('key_message', campaign.key_message)
       setFieldValue('content_dos', campaign.content_dos.join('\n'))
       setFieldValue('content_donts', campaign.content_donts.join('\n'))
-      setFieldValue('platforms', campaign.platforms.map((str) => str.toLowerCase()))
+      setFieldValue(
+        'platforms',
+        campaign.platforms.map((str) => str.toLowerCase()),
+      )
       setFieldValue('influencer_tiers', campaign.influencer_tiers)
       setFieldValue(
         'content_types',

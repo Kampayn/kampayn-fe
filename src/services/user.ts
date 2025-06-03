@@ -30,7 +30,7 @@ const userService: UserService = {
       const errorMessage = axiosError.response?.data?.message || 'Gagal mengambil profil'
       return { success: false, error: errorMessage }
     }
-  }
+  },
 }
 
 export default userService

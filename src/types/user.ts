@@ -42,7 +42,7 @@ export interface UserRoleParams {
   instagram_avg_comments?: string
   instagram_engagement_rate?: string
   portfolio_url?: string
-  follower_tier?: 'nano' |'micro' |'macro' |'mega'
+  follower_tier?: 'nano' | 'micro' | 'macro' | 'mega'
 }
 
 export interface UserResponse {

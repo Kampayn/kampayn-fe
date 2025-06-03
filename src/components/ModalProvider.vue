@@ -11,7 +11,7 @@ const { show, showAlert, component, componentProps, isAlert } = useModal()
   <Dialog :open="show" @update:open="(value) => (show = value)" v-if="!isAlert">
     <component :is="component" v-bind="componentProps" v-if="component" />
   </Dialog>
-  
+
   <!-- Alert Dialog -->
   <AlertDialog :open="showAlert" @update:open="(value) => (showAlert = value)" v-if="isAlert">
     <component :is="component" v-bind="componentProps" v-if="component" />

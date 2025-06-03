@@ -92,14 +92,14 @@ const links = [
                   v-if="link.label !== 'Logout'"
                   :to="link.href"
                   class="flex gap-2 text-xl font-medium"
-                  ><component :is="link.icon"/> {{ link.label }}</RouterLink
+                  ><component :is="link.icon" /> {{ link.label }}</RouterLink
                 >
                 <button
                   v-if="link.label === 'Logout'"
                   :to="link.href"
                   class="flex gap-2 text-xl text-destructive text-start font-medium"
                 >
-                <component :is="link.icon"/> {{ link.label }}
+                  <component :is="link.icon" /> {{ link.label }}
                 </button>
               </template>
             </div>

@@ -23,7 +23,7 @@ export function useModal() {
     component.value = options.component
     componentProps.value = options.props || {}
     isAlert.value = options.isAlert || false
-    
+
     if (options.isAlert) {
       showAlert.value = true
     } else {

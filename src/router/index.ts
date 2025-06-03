@@ -93,7 +93,7 @@ const router = createRouter({
       path: '/campaign/edit/:id',
       name: 'edit-campaign',
       component: EditCampaignView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
   ],
 })

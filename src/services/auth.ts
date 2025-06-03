@@ -12,15 +12,9 @@ import type {
 import type { Result, ApiError } from '@/types/common'
 
 interface AuthService {
-  login: (
-    params: LoginParams,
-  ) => Promise<Result<LoginResponse, string>>
-  register: (
-    params: RegisterParams,
-  ) => Promise<Result<RegisterResponse, string>>
-  google: (
-    params: GoogleParams,
-  ) => Promise<Result<LoginResponse, string>>
+  login: (params: LoginParams) => Promise<Result<LoginResponse, string>>
+  register: (params: RegisterParams) => Promise<Result<RegisterResponse, string>>
+  google: (params: GoogleParams) => Promise<Result<LoginResponse, string>>
   refreshToken: (refreshToken: string) => Promise<Result<RefreshTokenResponse, string>>
 }
 
@@ -64,7 +58,7 @@ const authService: AuthService = {
       const errorMessage = axiosError.response?.data?.message || 'Refresh token gagal'
       return { success: false, error: errorMessage }
     }
-  }
+  },
 }
 
 export default authService
