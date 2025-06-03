@@ -292,8 +292,6 @@ watch(
   currentCampaign,
   (campaign) => {
     if (campaign) {
-      console.log('campaign', campaign)
-
       // Set form values dari data campaign
       setFieldValue('campaign_name', campaign.campaign_name)
       setFieldValue('campaign_type', campaign.campaign_type)

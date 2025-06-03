@@ -43,8 +43,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { useCampaignStore } from '@/stores/campaign'
 import { storeToRefs } from 'pinia'
-import { toast } from 'vue-sonner'
 import { useRouter } from 'vue-router'
+import { toast } from 'vue-sonner'
 
 const router = useRouter()
 
@@ -247,7 +247,6 @@ watch(
 const onSubmit = handleSubmit(async (vals) => {
   try {
     isLoading.value = true
-    console.log('Campaign Data:', vals)
 
     const isSuccess = await campaignStore.create({
       ...vals,
@@ -260,43 +259,56 @@ const onSubmit = handleSubmit(async (vals) => {
         .map((line) => line.trim())
         .filter((line) => line.length > 0),
       content_types: [vals.content_types],
+      status: 'active',
     })
 
-    if (!isSuccess) {
-      toast.error('Failed to create campaign. Please try again.')
-      return
+    if (isSuccess) {
+      // Reset form
+      resetForm()
+      dateRange.value = { start, end }
+
+      router.push('/dashboard')
     }
-
-    toast.success('Campaign created successfully!')
-    router.push('/dashboard')
-
-    // Reset form
-    resetForm()
-    dateRange.value = { start, end }
   } catch (error) {
     console.error('Error submitting campaign:', error)
-    alert('Failed to publish campaign. Please try again.')
+    toast.error('Failed to publish campaign. Please try again.')
   } finally {
     isLoading.value = false
   }
 })
 
-const onSaveDraft = async () => {
+const onSubmitDraft = handleSubmit(async (vals) => {
   try {
-    isDraftSaving.value = true
+    isLoading.value = true
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    const isSuccess = await campaignStore.create({
+      ...vals,
+      content_dos: vals.content_dos
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0),
+      content_donts: vals.content_donts
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0),
+      content_types: [vals.content_types],
+      status: 'draft',
+    })
 
-    console.log('Draft saved:', values)
-    alert('Draft saved successfully! 💾')
+    if (isSuccess) {
+      // Reset form
+      resetForm()
+      dateRange.value = { start, end }
+
+      router.push('/dashboard')
+    }
   } catch (error) {
-    console.error('Error saving draft:', error)
-    alert('Failed to save draft. Please try again.')
+    console.error('Error submitting campaign:', error)
+    toast.error('Failed to publish campaign. Please try again.')
   } finally {
-    isDraftSaving.value = false
+    isLoading.value = false
   }
-}
+})
 
 const handleInfluencerTypeToggle = (type: string) => {
   const currentTypes = values.influencer_tiers || []
@@ -808,7 +820,7 @@ const formatCurrency = (amount: number) => {
                 variant="outline"
                 class="bg-teal-50 text-teal-700 border-teal-200 hover:bg-teal-100 hover:text-teal-800"
                 :disabled="isDraftSaving"
-                @click="onSaveDraft"
+                @click="onSubmitDraft"
               >
                 <Loader2 v-if="isDraftSaving" class="mr-2 h-4 w-4 animate-spin" />
                 Save as Draft
@@ -834,7 +846,7 @@ const formatCurrency = (amount: number) => {
           <div class="flex items-center gap-3">
             <div class="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
             <span class="text-sm font-medium">Unsaved changes</span>
-            <Button size="sm" variant="outline" @click="onSaveDraft" :disabled="isDraftSaving">
+            <Button size="sm" variant="outline" @click="onSubmitDraft" :disabled="isDraftSaving">
               <Loader2 v-if="isDraftSaving" class="mr-1 h-3 w-3 animate-spin" />
               Save Draft
             </Button>
