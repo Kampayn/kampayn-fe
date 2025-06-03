@@ -113,10 +113,16 @@
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem @click="handleUpdate"> Update </DropdownMenuItem>
-          <DropdownMenuItem v-if="campaign.status !== 'active'" @click="handleUpdateStatus('active')">
+          <DropdownMenuItem
+            v-if="campaign.status !== 'active'"
+            @click="handleUpdateStatus('active')"
+          >
             Set Active
           </DropdownMenuItem>
-          <DropdownMenuItem v-if="campaign.status === 'active'" @click="handleUpdateStatus('cancelled')">
+          <DropdownMenuItem
+            v-if="campaign.status === 'active'"
+            @click="handleUpdateStatus('cancelled')"
+          >
             Set Inactive
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -150,7 +156,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useModal } from '@/composables/useModal'
 import KDeleteModal from '@/components/KDeleteModal.vue'
-import { storeToRefs } from 'pinia'
 import { toast } from 'vue-sonner'
 
 const { openModal } = useModal()
@@ -174,9 +179,9 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
 const router = useRouter()
 const campaignStore = useCampaignStore()
-const {isLoading} = storeToRefs(campaignStore)
 
 const formatCurrency = (amount: string, currency: string): string => {
   const num = Number.parseFloat(amount)
@@ -221,31 +226,19 @@ const handleUpdate = () => {
   router.push({ name: 'edit-campaign', params: { id: props.campaign.id } })
 }
 
-const handleUpdateStatus = async (status: "draft" | "published" | "pending_review" | "active" | "completed" | "cancelled") => {
-  if (isLoading.value) return
-  
+const handleUpdateStatus = async (
+  status: 'draft' | 'published' | 'pending_review' | 'active' | 'completed' | 'cancelled',
+) => {
   try {
-    // Prepare data sesuai dengan CreateParams interface
-    const updateData = {
-      campaign_name: props.campaign.campaign_name,
-      campaign_type: props.campaign.campaign_type,
-      product_story: props.campaign.product_story,
-      key_message: props.campaign.key_message,
-      content_dos: props.campaign.content_dos,
-      content_donts: props.campaign.content_donts,
-      platforms: props.campaign.platforms,
-      influencer_tiers: props.campaign.influencer_tiers,
-      content_types: props.campaign.content_types,
-      influencers_needed: props.campaign.influencers_needed,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, user_id, createdAt, updatedAt, ...campaignData } = props.campaign
+
+    const isSuccess = await campaignStore.update(id, {
+      ...campaignData,
       budget: Number.parseFloat(props.campaign.budget),
-      currency: props.campaign.currency,
       payment_method: props.campaign.payment_method as 'secure_payment' | 'bank_transfer',
-      start_date: props.campaign.start_date,
-      end_date: props.campaign.end_date,
-      status
-    }
-    
-    const isSuccess = await campaignStore.update(props.campaign.id, updateData)
+      status,
+    })
     if (isSuccess) {
       // Update local campaign object untuk reactivity
       Object.assign(props.campaign, { status })
