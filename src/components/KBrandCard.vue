@@ -112,31 +112,8 @@
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem @click="handleUpdate">
-            Update
-          </DropdownMenuItem>
-          <AlertDialog>
-            <AlertDialogTrigger as-child>
-              <DropdownMenuItem @click.prevent>
-                <span class="text-red-600">Delete</span>
-              </DropdownMenuItem>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Hapus Campaign</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Apakah Anda yakin ingin menghapus campaign "{{ campaign.campaign_name }}"? 
-                  Tindakan ini tidak dapat dibatalkan.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Batal</AlertDialogCancel>
-                <AlertDialogAction @click="handleDelete" class="bg-red-600 hover:bg-red-700">
-                  Hapus
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <DropdownMenuItem @click="handleUpdate"> Update </DropdownMenuItem>
+          <DropdownMenuItem @click="handleOpenModal" variant="destructive">Delete</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </CardFooter>
@@ -160,17 +137,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
+import { useModal } from '@/composables/useModal'
+import KDeleteModal from '@/components/KDeleteModal.vue'
+
+const { openModal } = useModal()
 
 interface CampaignMetrics {
   applications: {
@@ -242,5 +212,19 @@ const handleDelete = async () => {
   if (success) {
     // Campaign sudah dihapus dari store, tidak perlu action tambahan
   }
+}
+
+const handleOpenModal = () => {
+  openModal({
+    component: KDeleteModal,
+    isAlert: true,
+    props: {
+      title: 'Hapus Campaign',
+      description: `Apakah Anda yakin ingin menghapus campaign "${props.campaign.campaign_name}"? Tindakan ini tidak dapat dibatalkan.`,
+      confirmText: 'Hapus',
+      cancelText: 'Batal',
+      onConfirm: handleDelete,
+    },
+  })
 }
 </script>

@@ -5,7 +5,8 @@ import { Toaster } from 'vue-sonner'
 import 'vue-sonner/style.css' // vue-sonner v2 requires this import
 import { storeToRefs } from 'pinia'
 
-import { useUserStore } from './stores/user'
+import { useUserStore } from '@/stores/user'
+import ModalProvider from '@/components/ModalProvider.vue'
 
 const router = useRouter()
 
@@ -36,5 +37,7 @@ watch(
 
 <template>
   <Toaster position="top-center" rich-colors class="pointer-events-auto" />
+  <ModalProvider />
+
   <RouterView />
 </template>
