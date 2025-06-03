@@ -97,3 +97,30 @@ export interface CreateResponse {
     campaigns: Campaign[]
   }
 }
+
+export interface CampaignResponse {
+  status: string
+  message: string
+  data: {
+    campaign: Campaign
+  }
+}
+
+export interface UpdateParams {
+  campaign_name?: string
+  campaign_type?: 'brand_awareness' | 'product_launch' | 'promo_sale' | 'other'
+  product_story?: string
+  key_message?: string
+  content_dos?: string[]
+  content_donts?: string[]
+  platforms?: string[]
+  influencer_tiers?: string[]
+  content_types?: string[]
+  influencers_needed?: number
+  budget?: number
+  currency?: string
+  payment_method?: 'secure_payment' | 'bank_transfer'
+  start_date?: string // Or Date
+  end_date?: string // Or Date
+  status?: 'draft' | 'published' | 'pending_review' | 'active' | 'completed' | 'cancelled'
+}

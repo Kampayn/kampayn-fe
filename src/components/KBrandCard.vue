@@ -106,13 +106,37 @@
         See Details
       </Button>
       <DropdownMenu>
-        <DropdownMenuTrigger as-child
-          ><Button size="icon" variant="outline">
-            <Settings class="h-4 w-4" /> </Button
-        ></DropdownMenuTrigger>
+        <DropdownMenuTrigger as-child>
+          <Button size="icon" variant="outline">
+            <Settings class="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>Update</DropdownMenuItem>
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+          <DropdownMenuItem @click="handleUpdate">
+            Update
+          </DropdownMenuItem>
+          <AlertDialog>
+            <AlertDialogTrigger as-child>
+              <DropdownMenuItem @click.prevent>
+                <span class="text-red-600">Delete</span>
+              </DropdownMenuItem>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Hapus Campaign</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Apakah Anda yakin ingin menghapus campaign "{{ campaign.campaign_name }}"? 
+                  Tindakan ini tidak dapat dibatalkan.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <AlertDialogAction @click="handleDelete" class="bg-red-600 hover:bg-red-700">
+                  Hapus
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </DropdownMenuContent>
       </DropdownMenu>
     </CardFooter>
@@ -121,6 +145,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useCampaignStore } from '@/stores/campaign'
 
 import type { Campaign } from '@/types/campaign'
 import { Badge } from '@/components/ui/badge'
@@ -134,6 +160,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 
 interface CampaignMetrics {
   applications: {
@@ -154,6 +191,8 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const router = useRouter()
+const campaignStore = useCampaignStore()
 
 const formatCurrency = (amount: string, currency: string): string => {
   const num = Number.parseFloat(amount)
@@ -193,4 +232,15 @@ const getStatusColorClasses = (status: string): string => {
 }
 
 const statusColor = computed(() => getStatusColorClasses(props.campaign.status))
+
+const handleUpdate = () => {
+  router.push({ name: 'edit-campaign', params: { id: props.campaign.id } })
+}
+
+const handleDelete = async () => {
+  const success = await campaignStore.deleteCampaign(props.campaign.id)
+  if (success) {
+    // Campaign sudah dihapus dari store, tidak perlu action tambahan
+  }
+}
 </script>
