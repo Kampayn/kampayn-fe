@@ -29,10 +29,17 @@ export const useCampaignStore = defineStore('campaign', () => {
     }
   }
 
-  const get = async (): Promise<void> => {
+  const get = async (isMyCampaign: boolean): Promise<void> => {
     isLoading.value = true
     try {
-      const result = await campaignService.get()
+      let result
+
+      if (isMyCampaign) {
+        result = await campaignService.getMy()
+      } else {
+        result = await campaignService.getAll({status: 'active'})
+      }
+
       if (!result.success) {
         toast.error(result.error)
         return

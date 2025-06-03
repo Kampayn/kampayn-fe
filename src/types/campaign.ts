@@ -36,7 +36,7 @@ export interface Campaign {
   status: 'draft' | 'published' | 'pending_review' | 'active' | 'completed' | 'cancelled'
   createdAt: string // Or Date
   updatedAt: string // Or Date
-  brandUser: BrandUser
+  brandUser?: BrandUser
 }
 
 interface Pagination {
@@ -51,6 +51,14 @@ interface Pagination {
 interface Filters {
   sort_by: string
   sort_order: string
+}
+
+export interface GetParams {
+  page?: number
+  limit?: number
+  sort_by?: string
+  sort_order?: 'DESC' | 'ASC'
+  status?: 'draft' | 'published' | 'pending_review' | 'active' | 'completed' | 'cancelled'
 }
 
 export interface GetResponse {

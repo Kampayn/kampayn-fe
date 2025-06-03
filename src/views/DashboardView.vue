@@ -25,16 +25,12 @@ const { campaigns } = storeToRefs(campaignStore)
 watch(
   () => user.value.role,
   (role) => {
-    if (role === 'brand') {
-      campaignStore.get()
-    }
+    campaignStore.get(role === 'brand')
   },
 )
 
 onMounted(() => {
-  if (user.value.role === 'brand') {
-    campaignStore.get()
-  }
+  campaignStore.get(user.value.role === 'brand')
 })
 </script>
 
@@ -71,13 +67,13 @@ onMounted(() => {
             applications: {
               applied: 10,
               accepted: 999,
-              rejected: 3 
+              rejected: 3,
             },
             content: {
               pending: 10,
               approved: 999,
               rejected: 3,
-            }
+            },
           }"
         />
         <!-- <KCard
