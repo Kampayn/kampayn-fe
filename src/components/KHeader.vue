@@ -77,14 +77,14 @@ const links = [
           <RouterLink to="/register">Daftar</RouterLink>
         </Button>
       </div>
-      <div v-else class="flex items-center space-x-2">
+      <div v-else class="flex items-center space-x-4">
         <Avatar class="size-7">
           <AvatarImage src="https://github.com/unovue.png" alt="@unovue" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
 
         <Sheet>
-          <SheetTrigger><Menu /></SheetTrigger>
+          <SheetTrigger as-child><Button variant="outline" size="icon"><Menu /></Button></SheetTrigger>
           <SheetContent class="w-[400px] sm:w-[540px]">
             <div class="flex flex-col gap-4 px-7 py-5 w-full">
               <template v-for="(link, index) in links" :key="index">
