@@ -30,12 +30,12 @@ export const useCampaignStore = defineStore('campaign', () => {
     }
   }
 
-  const get = async (isMyCampaign: boolean): Promise<void> => {
+  const get = async (isBrand: boolean): Promise<void> => {
     isLoading.value = true
     try {
       let result
 
-      if (isMyCampaign) {
+      if (isBrand) {
         result = await campaignService.getMy()
       } else {
         result = await campaignService.getAll({ status: 'active' })
