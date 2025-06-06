@@ -7,11 +7,11 @@ import { useUserStore } from '@/stores/user'
 import { useCampaignStore } from '@/stores/campaign'
 import KHeader from '@/components/KHeader.vue'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import KFooter from '@/components/KFooter.vue'
 import { Input } from '@/components/ui/input'
 // import KCard from '@/components/KCard.vue'
 import KBrandCard from '@/components/KBrandCard.vue'
+import KCampaignCard from '@/components/KCampaignCard.vue'
 
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
@@ -48,15 +48,13 @@ onMounted(() => {
     </section>
 
     <!-- New Campaigns Section -->
-    <section>
-      <div v-if="user.role === 'brand'" class="flex justify-between items-center mb-6">
+    <section v-if="user.role === 'brand'">
+      <div class="flex justify-between items-center mb-6">
         <h2 class="text-xl font-semibold">Campaign Anda</h2>
         <Button as-child>
           <RouterLink to="/create"> Create Campaign <Plus class="h-4 w-4" /> </RouterLink>
         </Button>
       </div>
-
-      <h2 v-else class="mb-6 text-2xl font-semibold">Ongoing Campaigns</h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <KBrandCard
@@ -76,14 +74,13 @@ onMounted(() => {
             },
           }"
         />
-        <!-- <KCard
-          v-for="(item, index) in campaigns"
-          :key="index"
-          @click="$router.push({ name: 'detail', params: { id: item.id } })"
-          v-bind="item"
-          class="overflow-hidden cursor-pointer"
-        /> -->
       </div>
+    </section>
+
+    <section v-else>
+      <h2 class="mb-6 text-2xl font-semibold">Ongoing Campaigns</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
     </section>
 
     <!-- New Campaign Section -->
@@ -98,24 +95,7 @@ onMounted(() => {
       </div>
 
       <div class="space-y-4">
-        <Card v-for="(item, index) in campaigns" :key="index" class="overflow-hidden">
-          <div class="flex flex-col sm:flex-row">
-            <div
-              class="bg-gray-100 w-full sm:w-48 h-48 sm:h-auto flex items-center justify-center text-gray-400"
-            >
-              Pict
-            </div>
-            <div class="p-6 flex-1 flex flex-col justify-between">
-              <div>
-                <h3 class="text-xl font-semibold mb-2">Judul</h3>
-                <p class="text-gray-500 text-sm">Lorem ipsum dolor sit amet...</p>
-              </div>
-              <div class="text-right mt-4">
-                <p class="text-gray-500 text-sm">14 Desember 2024</p>
-              </div>
-            </div>
-          </div>
-        </Card>
+        <KCampaignCard v-for="(item, index) in campaigns" :key="index" :campaign="item" />
       </div>
     </section>
   </main>

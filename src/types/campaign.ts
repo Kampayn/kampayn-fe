@@ -30,7 +30,7 @@ export interface Campaign {
   influencers_needed: number
   budget: string // Or number if you plan to parse it
   currency: string
-  payment_method: string
+  payment_method: 'secure_payment' | 'bank_transfer'
   start_date: string // Or Date
   end_date: string // Or Date
   status: 'draft' | 'published' | 'pending_review' | 'active' | 'completed' | 'cancelled'
