@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { Mail } from 'lucide-vue-next'
+import { LoaderCircle, Mail } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
+import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 
+import { useUserStore } from '@/stores/user'
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
@@ -16,6 +19,12 @@ import {
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import KHeader from '@/components/KHeader.vue'
+import { onMounted } from 'vue'
+
+const router = useRouter()
+
+const userStore = useUserStore()
+const { isLoading, user } = storeToRefs(userStore)
 
 const formSchema = toTypedSchema(
   z.object({
@@ -25,15 +34,48 @@ const formSchema = toTypedSchema(
   }),
 )
 
-const { handleSubmit } = useForm({
+const { isFieldDirty, handleSubmit, setFieldValue, meta } = useForm({
   validationSchema: formSchema,
   initialValues: {
     email: 'test@kampaiyn.com',
   },
 })
 
-const onSubmit = handleSubmit((values) => {
-  console.log('Form submitted!', values)
+const onSubmit = handleSubmit(async (values) => {
+  const isSuccess = await userStore.completeProfile({
+    role: 'influencer',
+    category: values.category,
+    instagram_username: values.instagram,
+  })
+
+  if (isSuccess) router.push('/dashboard')
+})
+
+const categories = [
+  {
+    value: 'beauty',
+    label: 'Beauty',
+  },
+  {
+    value: 'comedy',
+    label: 'Comedy',
+  },
+  {
+    value: 'fashion',
+    label: 'Fashion',
+  },
+  {
+    value: 'food',
+    label: 'Food',
+  },
+  {
+    value: 'lifestyle',
+    label: 'Lifestyle',
+  },
+]
+
+onMounted(() => {
+  setFieldValue('email', user.value.email)
 })
 </script>
 
@@ -63,7 +105,7 @@ const onSubmit = handleSubmit((values) => {
           </FormItem>
         </FormField>
 
-        <FormField v-slot="{ componentField }" name="instagram">
+        <FormField v-slot="{ componentField }" name="instagram" :validate-on-blur="!isFieldDirty">
           <FormItem>
             <FormControl>
               <Input type="text" placeholder="Instagram Username" is-icon v-bind="componentField">
@@ -89,10 +131,8 @@ const onSubmit = handleSubmit((values) => {
           </FormItem>
         </FormField>
 
-        <FormField v-slot="{ componentField }" name="category">
+        <FormField v-slot="{ componentField }" name="category" :validate-on-blur="!isFieldDirty">
           <FormItem>
-            <!-- <FormLabel>Email</FormLabel> -->
-
             <Select v-bind="componentField">
               <FormControl>
                 <SelectTrigger size="lg" class="w-full">
@@ -101,9 +141,7 @@ const onSubmit = handleSubmit((values) => {
               </FormControl>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="m@example.com"> m@example.com </SelectItem>
-                  <SelectItem value="m@google.com"> m@google.com </SelectItem>
-                  <SelectItem value="m@support.com"> m@support.com </SelectItem>
+                  <SelectItem v-for="item in categories" :key="item.value" :value="item.value">{{ item.label }}</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -111,7 +149,10 @@ const onSubmit = handleSubmit((values) => {
           </FormItem>
         </FormField>
 
-        <Button type="submit" size="lg" class="w-full">Register</Button>
+        <Button type="submit" size="lg" :disabled="!meta.valid || isLoading" class="w-full"
+          ><LoaderCircle v-if="isLoading" class="animate-spin size-5 mr-2" />
+          <template v-else>Register</template></Button
+        >
       </form>
     </div>
   </main>
