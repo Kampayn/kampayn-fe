@@ -297,7 +297,7 @@ onMounted(async () => {
         <Separator />
         <div>
           <h3 class="font-semibold text-gray-900 mb-3">Campaign Guidelines</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
             <div class="bg-green-50 rounded-lg p-4">
               <div class="flex items-center gap-2 mb-3">
                 <CheckCircle class="h-5 w-5 text-green-600" />
