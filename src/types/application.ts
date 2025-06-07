@@ -1,4 +1,5 @@
 import type { Campaign } from "./campaign"
+import type { User } from "./user"
 
 export interface Application {
   id: string
@@ -8,7 +9,8 @@ export interface Application {
   applied_at: string
   createdAt: string
   updatedAt: string
-  campaign: Campaign
+  campaign?: Campaign
+  influencer?: User
 }
 
 // export interface ApplicationParams {

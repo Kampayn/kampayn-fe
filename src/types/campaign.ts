@@ -1,3 +1,5 @@
+import type { Application } from "./application"
+
 interface BrandProfile {
   id: string
   user_id: string
@@ -68,6 +70,15 @@ export interface GetResponse {
     campaigns: Campaign[]
     pagination: Pagination
     filters: Filters
+  }
+}
+
+export interface GetCampaignApplicationsResponse {
+  status: string
+  message: string
+  data: {
+    application: Application[]
+    pagination: Pagination
   }
 }
 

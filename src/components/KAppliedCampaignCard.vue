@@ -10,7 +10,7 @@ import { getCampaignTypeLabel } from '@/utils/enumHelper'
 import type { Application } from '@/types/application'
 
 interface Props {
-  campaign: Campaign
+  campaign?: Campaign
   application: Application
   isLoading: boolean
 }
@@ -41,11 +41,11 @@ const handleCancel = () => {
   <Card class="w-full md:max-w-md transition-shadow duration-200 hover:shadow-lg">
     <CardHeader class="space-y-1">
       <CardTitle class="text-lg leading-tight line-clamp-2">
-        {{ campaign.campaign_name }}
+        {{ campaign?.campaign_name }}
       </CardTitle>
       <p class="text-sm text-muted-foreground">
-        {{ getCampaignTypeLabel(campaign.campaign_type) }} • Created on
-        {{ dayjs(campaign.createdAt).format('D MMM YYYY') }}
+        {{ getCampaignTypeLabel(campaign?.campaign_type || '') }} • Created on
+        {{ dayjs(campaign?.createdAt).format('D MMM YYYY') }}
       </p>
     </CardHeader>
 
@@ -60,8 +60,8 @@ const handleCancel = () => {
       <div class="flex items-center gap-2 text-sm">
         <Calendar class="h-4 w-4 text-muted-foreground" />
         <span>
-          {{ formatDate(campaign.start_date) }} -
-          {{ formatDate(campaign.end_date) }}
+          {{ formatDate(campaign?.start_date || '') }} -
+          {{ formatDate(campaign?.end_date || '') }}
         </span>
       </div>
 
@@ -69,7 +69,7 @@ const handleCancel = () => {
       <div v-if="application.status === 'accepted'" class="flex items-center gap-2 text-sm">
         <FileText class="h-4 w-4 text-orange-500" />
         <span class="font-medium text-orange-600">
-          Content due by {{ formatDate(application.campaign.end_date) }}
+          Content due by {{ formatDate(application.campaign?.end_date || '') }}
         </span>
       </div>
 

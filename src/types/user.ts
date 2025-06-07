@@ -17,17 +17,19 @@ export interface BrandProfile {
 }
 
 export interface InfluencerProfile {
-  id: number
-  user_id: number
+  id: string
+  user_id: string
   instagram_username: string
   photo_url?: string
   categories: string[]
-  follower_tier: 'nano' | 'micro' | 'macro' | 'mega'
+  follower_tier?: 'nano' | 'micro' | 'macro' | 'mega'
   portfolio_url?: string
   instagram_followers?: string
   instagram_avg_likes?: string
   instagram_avg_comments?: string
-  instagram_engagement_rate?: string
+  instagram_engagement_rate?: string | null
+  createdAt: string
+  updatedAt: string
 }
 
 export interface UserRoleParams {

@@ -28,7 +28,8 @@ import KAnalysis from '@/components/KAnalysisResult.vue'
 import type { ReviewRow } from '@/types/review'
 import KReviewTask from '@/components/KReviewTask.vue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getCampaignTypeLabel, getPlatformIcon } from '@/utils/enumHelper'
+import { getCampaignTypeLabel, getPaymentMethodLabel, getPlatformIcon } from '@/utils/enumHelper'
+import KApplication from '@/components/KApplication.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -38,7 +39,7 @@ const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
 
 const campaignStore = useCampaignStore()
-const { isLoading, currentCampaign } = storeToRefs(campaignStore)
+const { currentCampaign } = storeToRefs(campaignStore)
 
 // Review data
 const rows = ref<ReviewRow[]>([
@@ -147,7 +148,7 @@ onMounted(async () => {
             {{ currentCampaign?.campaign_name }}
           </h1>
           <p class="text-gray-600">
-            {{ getCampaignTypeLabel(currentCampaign!.campaign_type) }} • Created on
+            {{ getCampaignTypeLabel(currentCampaign?.campaign_type || '') }} • Created on
             {{ dayjs(currentCampaign?.createdAt).format('D MMM YYYY') }}
           </p>
         </div>
@@ -206,7 +207,7 @@ onMounted(async () => {
             </div>
             <div class="space-y-1">
               <p class="text-sm font-medium text-gray-500">Payment Method</p>
-              <p>{{ currentCampaign?.payment_method }}</p>
+              <p>{{ getPaymentMethodLabel(currentCampaign?.payment_method || '') }}</p>
             </div>
             <div class="space-y-1">
               <p class="text-sm font-medium text-gray-500">Status</p>
@@ -325,6 +326,9 @@ onMounted(async () => {
         </div> -->
       </CardContent>
     </Card>
+
+    <!-- Application Section -->
+    <KApplication v-if="user.role === 'brand'" :campaignId />
 
     <!-- Review Task Section -->
     <KReviewTask v-if="user.role === 'brand'" :rows="rows" />
