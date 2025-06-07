@@ -25,3 +25,7 @@ export interface GetApplicationResponse {
     application: Application[]
   }
 }
+
+export interface DeleteApplicationResponse {
+  message: string
+}

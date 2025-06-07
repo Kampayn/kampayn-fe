@@ -51,5 +51,25 @@ export const useApplicationStore = defineStore('application', () => {
     }
   }
 
-  return { applications, isLoading, apply, get }
+  const cancel = async (id: string): Promise<boolean> => {
+    isLoading.value = true
+    try {
+      const result = await applicationService.delete(id)
+      if (!result.success) {
+        toast.error(result.error)
+        return false
+      }
+
+      toast.success(result.data.message)
+      return true
+    } catch (error) {
+      toast.error('Terjadi kesalahan saat membatalkan application')
+      console.log(error)
+      return false
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  return { applications, isLoading, apply, get, cancel }
 })

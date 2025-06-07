@@ -2,11 +2,12 @@ import { AxiosError } from 'axios'
 
 import { api } from '@/lib/axios'
 import type { Result, ApiError } from '@/types/common'
-import type { CreateApplicationResponse, GetApplicationResponse } from '@/types/application'
+import type { CreateApplicationResponse, DeleteApplicationResponse, GetApplicationResponse } from '@/types/application'
 
 interface ApplicationService {
   post: (campaign_id: string) => Promise<Result<CreateApplicationResponse, string>>
   get: () => Promise<Result<GetApplicationResponse, string>>
+  delete: (id: string) => Promise<Result<DeleteApplicationResponse, string>>
 }
 
 const applicationService: ApplicationService = {
@@ -27,6 +28,16 @@ const applicationService: ApplicationService = {
     } catch (error) {
       const axiosError = error as AxiosError<ApiError>
       const errorMessage = axiosError.response?.data?.message || 'Gagal mendapatkan application'
+      return { success: false, error: errorMessage }
+    }
+  },
+  delete: async (id: string): Promise<Result<DeleteApplicationResponse, string>> => {
+    try {
+      const response = await api.delete<DeleteApplicationResponse>(`/applications/${id}`)
+      return { success: true, data: response.data }
+    } catch (error) {
+      const axiosError = error as AxiosError<ApiError>
+      const errorMessage = axiosError.response?.data?.message || 'Gagal menghapus application'
       return { success: false, error: errorMessage }
     }
   }

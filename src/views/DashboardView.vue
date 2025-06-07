@@ -13,6 +13,7 @@ import KBrandCard from '@/components/KBrandCard.vue'
 import KCampaignCard from '@/components/KCampaignCard.vue'
 import KAppliedCampaignCard from '@/components/KAppliedCampaignCard.vue'
 import { useApplicationStore } from '@/stores/application'
+import { toast } from 'vue-sonner'
 
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
@@ -24,16 +25,33 @@ const applicationStore = useApplicationStore()
 const { applications } = storeToRefs(applicationStore)
 
 const selectedCampaignId = ref('')
+const selectedApplicationId = ref('')
 
 const handleApply = async (campaign_id: string) => {
   selectedCampaignId.value = campaign_id
 
   try {
-    await applicationStore.apply(campaign_id)
+    const isSuccess = await applicationStore.apply(campaign_id)
+    if (isSuccess) await applicationStore.get()
   } catch (error) {
     console.log(error)
+    toast.error('Gagal mengajukan aplikasi')
   } finally {
     selectedCampaignId.value = ''
+  }
+}
+
+const handleCancelApplication = async (id: string) => {
+  selectedApplicationId.value = id
+  try {
+    const isSuccess = await applicationStore.cancel(id)
+
+    if (isSuccess) await applicationStore.get()
+  } catch (error) {
+    console.log(error)
+    toast.error('Gagal membatalkan aplikasi')
+  } finally {
+    selectedApplicationId.value = ''
   }
 }
 
@@ -94,7 +112,7 @@ onMounted(() => {
       </div>
     </section>
 
-    <section v-else>
+    <section v-if="user.role === 'influencer' && applications.length">
       <h2 class="mb-6 text-2xl font-semibold">Applied Campaigns</h2>
 
       <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -103,6 +121,8 @@ onMounted(() => {
           :key="item.id"
           :campaign="item.campaign"
           :application="item"
+          @cancel="handleCancelApplication"
+          :is-loading="selectedApplicationId === item.id"
         />
       </div>
     </section>

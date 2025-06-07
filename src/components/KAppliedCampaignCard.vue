@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Calendar, CheckCircle2, CircleX, Clock, FileText, Loader } from 'lucide-vue-next'
+import { Calendar, CheckCircle2, CircleX, Clock, FileText, Loader, Loader2 } from 'lucide-vue-next'
 import type { Campaign } from '@/types/campaign'
 import dayjs from 'dayjs'
 import { getCampaignTypeLabel } from '@/utils/enumHelper'
@@ -12,9 +12,16 @@ import type { Application } from '@/types/application'
 interface Props {
   campaign: Campaign
   application: Application
+  isLoading: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  isLoading: false,
+})
+
+const emit = defineEmits<{
+  (e: 'cancel', id: string): void
+}>()
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('id-ID', {
@@ -24,6 +31,10 @@ const formatDate = (dateString: string) => {
   })
 }
 const canSubmitContent = computed(() => props.application.status === 'accepted')
+
+const handleCancel = () => {
+  emit('cancel', props.application.id)
+}
 </script>
 
 <template>
@@ -110,9 +121,17 @@ const canSubmitContent = computed(() => props.application.status === 'accepted')
     </CardContent>
 
     <CardFooter class="flex gap-2">
-      <Button v-if="application.status === 'applied'" class="flex-1" variant="destructive" size="sm"
-        >Cancel Apply</Button
+      <Button
+        v-if="application.status === 'applied'"
+        @click="handleCancel"
+        class="flex-1"
+        variant="destructive"
+        size="sm"
+        :disabled="isLoading"
       >
+        <Loader2 v-if="isLoading" class="mr-2 h-4 w-4 animate-spin" />
+        {{ isLoading ? 'Canceling...' : 'Cancel Apply' }}
+      </Button>
       <Button v-if="canSubmitContent" class="flex-1" size="sm">
         <FileText class="mr-1 h-4 w-4" />
         View Brief</Button
