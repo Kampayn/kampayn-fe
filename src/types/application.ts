@@ -15,6 +15,13 @@ export interface Application {
 //   campaign_id: string
 // }
 
-export interface ApplicationResponse {
+export interface CreateApplicationResponse {
   message: string
+}
+
+export interface GetApplicationResponse {
+  message: string
+  data: {
+    application: Application[]
+  }
 }

@@ -2,16 +2,17 @@ import { AxiosError } from 'axios'
 
 import { api } from '@/lib/axios'
 import type { Result, ApiError } from '@/types/common'
-import type { ApplicationResponse } from '@/types/application'
+import type { CreateApplicationResponse, GetApplicationResponse } from '@/types/application'
 
 interface ApplicationService {
-  post: (campaign_id: string) => Promise<Result<ApplicationResponse, string>>
+  post: (campaign_id: string) => Promise<Result<CreateApplicationResponse, string>>
+  get: () => Promise<Result<GetApplicationResponse, string>>
 }
 
 const applicationService: ApplicationService = {
-  post: async (campaign_id: string): Promise<Result<ApplicationResponse, string>> => {
+  post: async (campaign_id: string): Promise<Result<CreateApplicationResponse, string>> => {
     try {
-      const response = await api.post<ApplicationResponse>('/applications', { campaign_id })
+      const response = await api.post<CreateApplicationResponse>('/applications', { campaign_id })
       return { success: true, data: response.data }
     } catch (error) {
       const axiosError = error as AxiosError<ApiError>
@@ -19,6 +20,16 @@ const applicationService: ApplicationService = {
       return { success: false, error: errorMessage }
     }
   },
+  get: async (): Promise<Result<GetApplicationResponse, string>> => {
+    try {
+      const response = await api.get<GetApplicationResponse>('/my/applications')
+      return { success: true, data: response.data }
+    } catch (error) {
+      const axiosError = error as AxiosError<ApiError>
+      const errorMessage = axiosError.response?.data?.message || 'Gagal mendapatkan application'
+      return { success: false, error: errorMessage }
+    }
+  }
 }
 
 export default applicationService

@@ -27,7 +27,7 @@ const canSubmitContent = computed(() => props.application.status === 'accepted')
 </script>
 
 <template>
-  <Card class="w-full max-w-md transition-shadow duration-200 hover:shadow-lg">
+  <Card class="w-full md:max-w-md transition-shadow duration-200 hover:shadow-lg">
     <CardHeader class="space-y-1">
       <CardTitle class="text-lg leading-tight line-clamp-2">
         {{ campaign.campaign_name }}
