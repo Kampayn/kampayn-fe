@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Calculator, Calendar, CheckCircle, Notebook, NotebookPen, ReceiptText, XCircle } from 'lucide-vue-next'
+import {
+  Calculator,
+  Calendar,
+  CheckCircle,
+  NotebookPen,
+  ReceiptText,
+  XCircle,
+} from 'lucide-vue-next'
 import { useCampaignStore } from '@/stores/campaign'
 import { storeToRefs } from 'pinia'
 import { toast } from 'vue-sonner'
@@ -21,6 +28,7 @@ import KAnalysis from '@/components/KAnalysisResult.vue'
 import type { ReviewRow } from '@/types/review'
 import KReviewTask from '@/components/KReviewTask.vue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { getCampaignTypeLabel, getPlatformIcon } from '@/utils/enumHelper'
 
 const router = useRouter()
 const route = useRoute()
@@ -31,54 +39,6 @@ const { user } = storeToRefs(userStore)
 
 const campaignStore = useCampaignStore()
 const { isLoading, currentCampaign } = storeToRefs(campaignStore)
-
-// Types
-
-interface CampaignInfo {
-  title: string
-  brand: string
-  type: string
-  platform: string
-  influencerTier: string
-  totalInfluencers: string
-  timeline: string
-  tags: string[]
-}
-
-// Campaign data
-const campaignInfo: CampaignInfo = {
-  title: 'New Arrival! Limited Stock, Jangan Sampai Ketinggalan',
-  brand: 'Rinrain Store',
-  type: 'Product Launch',
-  platform: 'Instagram',
-  influencerTier: 'Nano, Mikro',
-  totalInfluencers: '50 Influencer',
-  timeline: '20 - 30 June 2024',
-  tags: ['Food', 'Healthy'],
-}
-
-const briefSections = [
-  {
-    title: 'Product Story',
-    content:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-  },
-  {
-    title: 'Key Message',
-    content: [
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    ],
-  },
-  {
-    title: "Do's & Dont's",
-    content: [
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    ],
-  },
-]
 
 // Review data
 const rows = ref<ReviewRow[]>([
@@ -182,13 +142,13 @@ onMounted(async () => {
 
       <!-- Campaign Details -->
       <div class="space-y-6">
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col">
           <h1 class="text-2xl font-bold text-gray-900">
-            {{ campaignInfo.title }}
+            {{ currentCampaign?.campaign_name }}
           </h1>
           <p class="text-gray-600">
-            {{ currentCampaign?.campaign_type }} • Created on
-            {{ dayjs(currentCampaign?.createdAt).format('MMM DD, YYYY') }}
+            {{ getCampaignTypeLabel(currentCampaign!.campaign_type) }} • Created on
+            {{ dayjs(currentCampaign?.createdAt).format('D MMM YYYY') }}
           </p>
         </div>
 
@@ -200,11 +160,23 @@ onMounted(async () => {
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-1">
               <p class="text-sm font-medium text-gray-500">Content Type</p>
-              <p>{{ currentCampaign?.content_types.join(',') }}</p>
+              <p v-for="type in currentCampaign?.content_types" :key="type">
+                {{ type.charAt(0).toUpperCase() + type.slice(1) }}
+              </p>
             </div>
             <div class="space-y-1">
               <p class="text-sm font-medium text-gray-500">Platform</p>
-              <p>{{ currentCampaign?.platforms.join(',') }}</p>
+              <p>
+                <Badge
+                  v-for="platform in currentCampaign?.platforms"
+                  :key="platform"
+                  variant="outline"
+                  class="text-sm"
+                >
+                  {{ getPlatformIcon(platform) }}
+                  {{ platform.charAt(0).toUpperCase() + platform.slice(1) }}
+                </Badge>
+              </p>
             </div>
             <div class="space-y-1">
               <p class="text-sm font-medium text-gray-500">Influencer Tier</p>
@@ -219,8 +191,8 @@ onMounted(async () => {
               </div>
             </div>
             <div class="space-y-1">
-              <p class="text-sm font-medium text-gray-500">Total Needed</p>
-              <p>{{ currentCampaign?.influencers_needed }} Influencer</p>
+              <p class="text-sm font-medium text-gray-500">Influencer Needed</p>
+              <p>0 / {{ currentCampaign?.influencers_needed }}</p>
             </div>
             <div class="space-y-1">
               <p class="text-sm font-medium text-gray-500">Timeline</p>
@@ -277,7 +249,7 @@ onMounted(async () => {
     <Separator class="my-8" />
 
     <!-- Brief Section -->
-    <Card class="mb-8 grid-cols-3">
+    <Card v-if="user.role === 'brand'" class="mb-8 grid-cols-3">
       <CardHeader>
         <CardTitle class="flex items-center gap-2 text-lg">
           <ReceiptText class="text-gray-500" />
@@ -304,7 +276,9 @@ onMounted(async () => {
                 <h3 class="font-semibold text-green-800">Do's</h3>
               </div>
               <ul class="space-y-2 text-gray-700 list-disc">
-                <li v-for="(item, index) in currentCampaign?.content_dos" :key="index" class="ml-6">{{ item }}</li>
+                <li v-for="(item, index) in currentCampaign?.content_dos" :key="index" class="ml-6">
+                  {{ item }}
+                </li>
               </ul>
             </div>
 
@@ -314,7 +288,13 @@ onMounted(async () => {
                 <h3 class="font-semibold text-red-800">Don'ts</h3>
               </div>
               <ul class="space-y-2 text-gray-700 list-disc">
-                <li v-for="(item, index) in currentCampaign?.content_donts" :key="index" class="ml-6">{{ item }}</li>
+                <li
+                  v-for="(item, index) in currentCampaign?.content_donts"
+                  :key="index"
+                  class="ml-6"
+                >
+                  {{ item }}
+                </li>
               </ul>
             </div>
           </div>
@@ -404,9 +384,9 @@ onMounted(async () => {
 
     <KAnalysis v-if="isCalculated && isFormValid" :roiValue="roiValue" :cacValue="cacValue" />
 
-    <KApplyCard v-if="false" />
+    <KApplyCard v-if="user.role === 'influencer'" />
 
-    <KAssigment v-if="false" />
+    <KAssigment v-if="user.role === 'influencer' && false" />
   </main>
 
   <KFooter />

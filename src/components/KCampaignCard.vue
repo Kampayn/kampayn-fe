@@ -15,6 +15,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { getCampaignTypeLabel, getPaymentMethodLabel, getPlatformIcon } from '@/utils/enumHelper'
+import dayjs from 'dayjs'
 
 // Menggunakan defineProps untuk mendefinisikan props komponen
 const props = defineProps<{
@@ -27,43 +29,7 @@ const emit = defineEmits<{
   (e: 'save', campaignId: string): void
 }>()
 
-// 2. State Management (Reaktivitas)
 const isSaved = ref(false)
-
-// 3. Helper Functions (Tetap sama, karena ini JavaScript murni)
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('id-ID', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
-}
-
-const getCampaignTypeLabel = (type: string) => {
-  const types: Record<string, string> = {
-    brand_awareness: 'Brand Awareness',
-    product_launch: 'Product Launch',
-    promo_sale: 'Promo & Sale',
-  }
-  return types[type] || type
-}
-
-const getPlatformIcon = (platform: string) => {
-  const icons: Record<string, string> = {
-    instagram: '📷',
-    tiktok: '🎵',
-    youtube: '📺',
-  }
-  return icons[platform] || '📱'
-}
-
-const getPaymentMethodLabel = (method: string) => {
-  const methods: Record<string, string> = {
-    bank_transfer: 'Bank Transfer',
-    secure_payment: 'Secure Payment',
-  }
-  return methods[method] || method
-}
 
 // 4. Event Handlers
 const handleSave = () => {
@@ -85,7 +51,8 @@ const handleSave = () => {
                 {{ campaign.campaign_name }}
               </h3>
               <span class="text-sm text-gray-900">
-                {{ getCampaignTypeLabel(campaign.campaign_type) }}
+                {{ getCampaignTypeLabel(campaign.campaign_type) }} • Created on
+                {{ dayjs(campaign.createdAt).format('D MMM YYYY') }}
               </span>
             </div>
 
@@ -185,7 +152,7 @@ const handleSave = () => {
                 <div>
                   <p class="text-xs text-gray-500">Start Date</p>
                   <p class="font-semibold text-gray-900">
-                    {{ formatDate(campaign.start_date) }}
+                    {{ dayjs(campaign.start_date).format('D MMM YYYY') }}
                   </p>
                 </div>
               </div>
@@ -195,7 +162,7 @@ const handleSave = () => {
                 <div>
                   <p class="text-xs text-gray-500">End Date</p>
                   <p class="font-semibold text-gray-900">
-                    {{ formatDate(campaign.end_date) }}
+                    {{ dayjs(campaign.end_date).format('D MMM YYYY') }}
                   </p>
                 </div>
               </div>
