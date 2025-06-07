@@ -8,33 +8,38 @@ import {
   FileText,
   Calendar1,
   CalendarX,
+  Loader2,
 } from 'lucide-vue-next'
+import dayjs from 'dayjs'
 
+import { getCampaignTypeLabel, getPaymentMethodLabel, getPlatformIcon } from '@/utils/enumHelper'
 import type { Campaign } from '@/types/campaign'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getCampaignTypeLabel, getPaymentMethodLabel, getPlatformIcon } from '@/utils/enumHelper'
-import dayjs from 'dayjs'
 
-// Menggunakan defineProps untuk mendefinisikan props komponen
-const props = defineProps<{
+interface Props { 
   campaign: Campaign
-}>()
+  isLoading?: boolean
+}
 
-// Menggunakan defineEmits untuk mendefinisikan event yang akan di-emit
+const props = withDefaults(defineProps<Props>(), {
+  isLoading: false,
+})
+
 const emit = defineEmits<{
-  (e: 'apply', campaignId: string): void
-  (e: 'save', campaignId: string): void
+  (e: 'apply', campaign_id: string): void
 }>()
 
 const isSaved = ref(false)
 
-// 4. Event Handlers
 const handleSave = () => {
   isSaved.value = !isSaved.value
-  emit('save', props.campaign.id)
+}
+
+const handleApply = () => {
+  emit('apply', props.campaign.id)
 }
 </script>
 
@@ -169,12 +174,9 @@ const handleSave = () => {
             </div>
           </div>
 
-          <Button
-            @click="$router.push({ name: 'detail', params: { id: campaign.id } })"
-            size="lg"
-            class="w-full"
-          >
-            Apply for Campaign
+          <Button @click="handleApply" size="lg" class="w-full" :disabled="isLoading">
+            <Loader2 v-if="isLoading" class="mr-2 h-4 w-4 animate-spin" />
+            {{ isLoading ? 'Applying...' : 'Apply for Campaign' }}
           </Button>
         </div>
       </div>

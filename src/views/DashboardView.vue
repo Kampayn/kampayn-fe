@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { Plus, Search } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 
@@ -19,8 +19,19 @@ const { user } = storeToRefs(userStore)
 const campaignStore = useCampaignStore()
 const { campaigns } = storeToRefs(campaignStore)
 
-// const campaigns = ref<number[]>([1, 2, 3])
-// const newCampaigns = ref<number[]>([1, 2])
+const selectedCampaignId = ref('')
+
+const handleApply = async(campaign_id: string) => {
+  selectedCampaignId.value = campaign_id
+
+  try {
+    await campaignStore.apply(campaign_id)
+  } catch (error) {
+    console.log(error)
+  } finally {
+    selectedCampaignId.value = ''
+  }
+}
 
 watch(
   () => user.value.role,
@@ -95,7 +106,13 @@ onMounted(() => {
       </div>
 
       <div class="space-y-4">
-        <KCampaignCard v-for="(item, index) in campaigns" :key="index" :campaign="item" />
+        <KCampaignCard
+          v-for="(item, index) in campaigns"
+          :key="index"
+          :campaign="item"
+          :is-loading="selectedCampaignId === item.id"
+          @apply="handleApply"
+        />
       </div>
     </section>
   </main>

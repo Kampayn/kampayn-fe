@@ -3,11 +3,13 @@ import { defineStore } from 'pinia'
 import type { Campaign, CreateParams } from '@/types/campaign'
 import campaignService from '@/services/campaign'
 import { toast } from 'vue-sonner'
+import applicationService from '@/services/application'
 
 export const useCampaignStore = defineStore('campaign', () => {
   const campaigns = ref<Campaign[]>([])
   const currentCampaign = ref<Campaign | null>(null)
   const isLoading = ref(false)
+  const isApplyLoading = ref(false)
 
   const create = async (params: CreateParams): Promise<boolean> => {
     isLoading.value = true
@@ -126,14 +128,35 @@ export const useCampaignStore = defineStore('campaign', () => {
     }
   }
 
+  const apply = async (campaign_id: string): Promise<boolean> => {
+    isApplyLoading.value = true
+    try {
+      const result = await applicationService.post(campaign_id)
+      if (!result.success) {
+        toast.error(result.error)
+        return false
+      }
+      toast.success(result.data.message)
+      return true
+    } catch (error) {
+      toast.error('Terjadi kesalahan saat mengajukan campaign')
+      console.log(error)
+      return false
+    } finally {
+      isApplyLoading.value = false
+    }
+  }
+
   return {
     campaigns,
     currentCampaign,
     isLoading,
+    isApplyLoading,
     create,
     get,
     getById,
     update,
     deleteCampaign,
+    apply
   }
 })
