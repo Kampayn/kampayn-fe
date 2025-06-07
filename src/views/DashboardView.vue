@@ -12,6 +12,9 @@ import { Input } from '@/components/ui/input'
 // import KCard from '@/components/KCard.vue'
 import KBrandCard from '@/components/KBrandCard.vue'
 import KCampaignCard from '@/components/KCampaignCard.vue'
+import KAppliedCampaignCard from '@/components/KAppliedCampaignCard.vue'
+import type { Campaign } from '@/types/campaign'
+import type { Application } from '@/types/application'
 
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
@@ -21,7 +24,7 @@ const { campaigns } = storeToRefs(campaignStore)
 
 const selectedCampaignId = ref('')
 
-const handleApply = async(campaign_id: string) => {
+const handleApply = async (campaign_id: string) => {
   selectedCampaignId.value = campaign_id
 
   try {
@@ -32,6 +35,46 @@ const handleApply = async(campaign_id: string) => {
     selectedCampaignId.value = ''
   }
 }
+
+const campaignBlabla = ref<Campaign>({
+  id: '15e44f5f-d6d2-42c4-bdd3-bb64e13dd531',
+  campaign_name: 'Minimo',
+  campaign_type: 'product_launch',
+  budget: '100000.00',
+  currency: 'IDR',
+  start_date: '2025-06-18',
+  end_date: '2025-06-21',
+  influencers_needed: 10,
+  content_types: ['image', 'video'],
+  payment_method: 'bank_transfer',
+  user_id: '1',
+  product_story: 'Minimo is a new product that is launching soon',
+  key_message: 'Minimo is a new product that is launching soon',
+  content_dos: [
+    'Minimo is a new product that is launching soon',
+    'Minimo is a new product that is launching soon',
+  ],
+  content_donts: [
+    'Minimo is a new product that is launching soon',
+    'Minimo is a new product that is launching soon',
+  ],
+  createdAt: '2021-01-01T00:00:00.000Z',
+  updatedAt: '2021-01-01T00:00:00.000Z',
+  platforms: ['instagram'],
+  influencer_tiers: ['nano'],
+  status: 'active',
+})
+
+const applicationBlablabla = ref<Application>({
+  id: '820ea274-5fdf-4127-b122-00b41d6a541f',
+  campaign_id: '15e44f5f-d6d2-42c4-bdd3-bb64e13dd531',
+  influencer_id: '04b303f9-344b-4ee0-a649-5f97a375e215',
+  status: 'accepted',
+  applied_at: '2025-06-07T07:21:48.278Z',
+  createdAt: '2025-06-07T07:21:48.279Z',
+  updatedAt: '2025-06-07T07:21:48.279Z',
+  campaign: campaignBlabla.value,
+})
 
 watch(
   () => user.value.role,
@@ -89,9 +132,16 @@ onMounted(() => {
     </section>
 
     <section v-else>
-      <h2 class="mb-6 text-2xl font-semibold">Ongoing Campaigns</h2>
+      <h2 class="mb-6 text-2xl font-semibold">Applied Campaigns</h2>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <KAppliedCampaignCard
+          v-for="i in 3"
+          :key="i"
+          :campaign="campaignBlabla"
+          :application="applicationBlablabla"
+        />
+      </div>
     </section>
 
     <!-- New Campaign Section -->

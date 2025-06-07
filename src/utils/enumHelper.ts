@@ -2,6 +2,7 @@ export const getCampaignTypeLabel = (type: string) => {
   const types: Record<string, string> = {
     brand_awareness: 'Brand Awareness',
     product_launch: 'Product Launch',
+    product_promotion: 'Product Promotion',
     promo_sale: 'Promo & Sale',
   }
   return types[type] || type

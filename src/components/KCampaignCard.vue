@@ -44,7 +44,7 @@ const handleApply = () => {
 </script>
 
 <template>
-  <Card class="w-full border border-gray-200 transition-shadow duration-200 hover:shadow-lg">
+  <Card class="w-full transition-shadow duration-200 hover:shadow-lg">
     <CardContent class="px-6">
       <div class="flex flex-col gap-6 lg:flex-row">
         <!-- Left Section - Main Info -->
@@ -55,7 +55,7 @@ const handleApply = () => {
               <h3 class="line-clamp-2 text-xl font-semibold text-gray-900">
                 {{ campaign.campaign_name }}
               </h3>
-              <span class="text-sm text-gray-900">
+              <span class="text-sm text-muted-foreground">
                 {{ getCampaignTypeLabel(campaign.campaign_type) }} • Created on
                 {{ dayjs(campaign.createdAt).format('D MMM YYYY') }}
               </span>
