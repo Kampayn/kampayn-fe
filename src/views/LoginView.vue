@@ -47,10 +47,18 @@ const handleGoogleSignIn = async () => {
 
     // Get ID token for backend validation
     const idToken = await userCredential.user.getIdToken()
-    const loginSuccess = await userStore.google({ idToken })
+    const { isSuccess, user } = await userStore.google({ idToken })
 
     // Only redirect if login was successful
-    if (loginSuccess) router.push('/dashboard')
+    // Only redirect if login was successful
+    if (isSuccess) {
+      // Check if user has a role
+      if (user?.role) {
+        router.push('/dashboard')
+      } else {
+        router.push({ name: 'choose-account-type' })
+      }
+    }
   } catch (error) {
     toast.error('Gagal login dengan Google')
     console.error('Google login failed:', error)
@@ -68,14 +76,21 @@ const onSubmit = handleSubmit(async (values) => {
 
     // Get ID token for backend validation
     const idToken = await userCredential.user.getIdToken()
-    const loginSuccess = await userStore.login({
+    const { isSuccess, user } = await userStore.login({
       email: values.email,
       password: values.password,
       idToken,
     })
 
     // Only redirect if login was successful
-    if (loginSuccess) router.push('/dashboard')
+    if (isSuccess) {
+      // Check if user has a role
+      if (user?.role) {
+        router.push('/dashboard')
+      } else {
+        router.push({ name: 'choose-account-type' })
+      }
+    }
   } catch (error) {
     toast.error('Email atau password salah')
     console.error('Email/Password sign in error:', error)

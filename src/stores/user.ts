@@ -84,21 +84,27 @@ export const useUserStore = defineStore('user', () => {
     api.defaults.headers.common['Authorization'] = `Bearer ${values.access_token}`
   }
 
-  const login = async (params: LoginParams): Promise<boolean> => {
+  const login = async (params: LoginParams): Promise<{ isSuccess: boolean; user: User | null }> => {
     isLoading.value = true
     try {
       const result = await authService.login(params)
 
       if (!result.success) {
         toast.error(result.error)
-        return false
+        return {
+          isSuccess: false,
+          user: null,
+        }
       }
 
       toast.success(result.data.message || 'Login berhasil')
 
       if (!result.data.data) {
         toast.error('Data pengguna tidak ditemukan')
-        return false
+        return {
+          isSuccess: false,
+          user: null,
+        }
       }
 
       setUser({
@@ -107,11 +113,17 @@ export const useUserStore = defineStore('user', () => {
         refresh_token: result.data.data.refreshToken,
       })
 
-      return true
+      return {
+        isSuccess: true,
+        user: result.data.data.user,
+      }
     } catch (error) {
       toast.error('Terjadi kesalahan saat login')
       console.log(error)
-      return false
+      return {
+        isSuccess: false,
+        user: null,
+      }
     } finally {
       isLoading.value = false
     }
@@ -137,18 +149,28 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  const google = async (params: GoogleParams): Promise<boolean> => {
+  const google = async (params: GoogleParams): Promise<{ isSuccess: boolean; user: User | null }> => {
     isLoading.value = true
     try {
       const result = await authService.google(params)
       if (!result.success) {
         toast.error(result.error)
-        return false
+        return {
+          isSuccess: false,
+          user: null,
+        }
       }
 
       toast.success('Login dengan Google berhasil')
-      console.log('user', result.data)
       isGoogleLogin.value = true
+
+      if (!result.data.data) {
+        toast.error('Data pengguna tidak ditemukan')
+        return {
+          isSuccess: false,
+          user: null,
+        }
+      }
 
       if (result.data.data?.user) {
         setUser({
@@ -158,11 +180,17 @@ export const useUserStore = defineStore('user', () => {
         })
       }
 
-      return true
+      return {
+        isSuccess: true,
+        user: result.data.data?.user
+      }
     } catch (error) {
       toast.error('Terjadi kesalahan saat login dengan Google')
       console.log(error)
-      return false
+      return {
+          isSuccess: false,
+          user: null,
+        }
     } finally {
       isLoading.value = false
     }
