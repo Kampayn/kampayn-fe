@@ -84,7 +84,12 @@ onMounted(async () => {
                   <div
                     class="h-10 w-10 rounded-full bg-gradient-to-br from-green-500 to-blue-500 flex items-center justify-center text-white text-xs font-medium"
                   >
-                    K
+                  {{
+                      row.influencer?.name
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')
+                    }}
                   </div>
                   <span class="font-medium text-gray-900">{{ row.influencer?.name }}</span>
                 </div>

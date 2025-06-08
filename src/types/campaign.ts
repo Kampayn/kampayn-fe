@@ -84,6 +84,15 @@ export interface GetCampaignApplicationsResponse {
   }
 }
 
+export interface GetCampaignTasksResponse {
+  status: string
+  message: string
+  data: {
+    task: Task[]
+    pagination: Pagination
+  }
+}
+
 export interface CreateParams {
   campaign_name: string
   campaign_type: 'brand_awareness' | 'product_launch' | 'promo_sale' | 'other'

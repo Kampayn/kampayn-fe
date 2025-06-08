@@ -24,7 +24,6 @@ import { Separator } from '@/components/ui/separator'
 import { useUserStore } from '@/stores/user'
 import KAssigment from '@/components/KAssigment.vue'
 import KAnalysis from '@/components/KAnalysisResult.vue'
-import type { ReviewRow } from '@/types/review'
 import KReviewTask from '@/components/KReviewTask.vue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getCampaignTypeLabel, getPaymentMethodLabel, getPlatformIcon } from '@/utils/enumHelper'
@@ -39,31 +38,6 @@ const { user } = storeToRefs(userStore)
 
 const campaignStore = useCampaignStore()
 const { currentCampaign } = storeToRefs(campaignStore)
-
-// Review data
-const rows = ref<ReviewRow[]>([
-  {
-    id: 1,
-    influencer: 'Keysha Moe',
-    preview: 'Link GDrive',
-    status: 'Pending Review',
-    statusType: 'pending',
-  },
-  {
-    id: 2,
-    influencer: 'Keysha Moe',
-    preview: 'Link GDrive',
-    status: 'Approved',
-    statusType: 'approved',
-  },
-  {
-    id: 3,
-    influencer: 'Keysha Moe',
-    preview: 'Link GDrive',
-    status: 'Approved',
-    statusType: 'approved',
-  },
-])
 
 // Form data
 const totalProfit = ref('')
@@ -330,7 +304,7 @@ onMounted(async () => {
     <KApplication v-if="user.role === 'brand'" :campaignId />
 
     <!-- Review Task Section -->
-    <KReviewTask v-if="user.role === 'brand'" :rows="rows" />
+    <KReviewTask v-if="user.role === 'brand'" :campaignId />
 
     <!-- Campaign Analysis Form -->
     <Card class="mb-8" v-if="false">

@@ -1,3 +1,5 @@
+import type { User } from "./user"
+
 export interface Task {
   id: string
   campaign_id?: string
@@ -7,6 +9,7 @@ export interface Task {
   submitted_at: string
   createdAt?: string
   updatedAt?: string
+  influencer?: User
 }
 
 export interface CreateTaskParams {

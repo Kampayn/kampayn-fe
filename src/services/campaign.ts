@@ -6,6 +6,7 @@ import type {
   CreateParams,
   CreateResponse,
   GetCampaignApplicationsResponse,
+  GetCampaignTasksResponse,
   GetParams,
   GetResponse,
 } from '@/types/campaign'
@@ -20,6 +21,7 @@ interface CampaignService {
     for_role: 'brand' | 'influencer',
   ) => Promise<Result<CampaignResponse, string>>
   getApplications: (id: string) => Promise<Result<GetCampaignApplicationsResponse, string>>
+  getTasks: (id: string) => Promise<Result<GetCampaignTasksResponse, string>>
   put: (id: string, params: CreateParams) => Promise<Result<CreateResponse, string>>
   delete: (id: string) => Promise<Result<CreateResponse, string>>
 }
@@ -71,6 +73,16 @@ const campaignService: CampaignService = {
   getApplications: async (id: string): Promise<Result<GetCampaignApplicationsResponse, string>> => {
     try {
       const response = await api.get<GetCampaignApplicationsResponse>(`/campaigns/${id}/applications`)
+      return { success: true, data: response.data }
+    } catch (error) {
+      const axiosError = error as AxiosError<ApiError>
+      const errorMessage = axiosError.response?.data?.message || 'Gagal mengambil campaign'
+      return { success: false, error: errorMessage }
+    }
+  },
+  getTasks: async (id: string): Promise<Result<GetCampaignTasksResponse, string>> => {
+    try {
+      const response = await api.get<GetCampaignTasksResponse>(`/campaigns/${id}/tasks`)
       return { success: true, data: response.data }
     } catch (error) {
       const axiosError = error as AxiosError<ApiError>

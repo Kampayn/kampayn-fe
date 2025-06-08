@@ -4,13 +4,16 @@ import type { Campaign, CreateParams } from '@/types/campaign'
 import campaignService from '@/services/campaign'
 import { toast } from 'vue-sonner'
 import type { Application } from '@/types/application'
+import type { Task } from '@/types/task'
 
 export const useCampaignStore = defineStore('campaign', () => {
   const campaigns = ref<Campaign[]>([])
   const currentCampaign = ref<Campaign | null>(null)
   const applications = ref<Application[]>([])
+  const tasks = ref<Task[]>([])
   const isLoading = ref(false)
   const isApplicationLoading = ref(false)
+  const isTaskLoading = ref(false)
 
   const create = async (params: CreateParams): Promise<boolean> => {
     isLoading.value = true
@@ -103,6 +106,27 @@ export const useCampaignStore = defineStore('campaign', () => {
     }
   }
 
+  const getTasks = async (id: string): Promise<boolean> => {
+    isTaskLoading.value = true
+    try {
+      const result = await campaignService.getTasks(id)
+      if (!result.success) {
+        toast.error(result.error)
+        return false
+      }
+
+      tasks.value = result.data.data.task
+      toast.success(result.data.message)
+      return true
+    } catch (error) {
+      toast.error('Terjadi kesalahan saat mengambil detail campaign')
+      console.log(error)
+      return false
+    } finally {
+      isTaskLoading.value = false
+    }
+  }
+
   const update = async (id: string, params: CreateParams): Promise<boolean> => {
     isLoading.value = true
     try {
@@ -154,12 +178,15 @@ export const useCampaignStore = defineStore('campaign', () => {
     campaigns,
     currentCampaign,
     applications,
+    tasks,
     isLoading,
     isApplicationLoading,
+    isTaskLoading,
     create,
     get,
     getById,
     getApplications,
+    getTasks,
     update,
     deleteCampaign,
   }
