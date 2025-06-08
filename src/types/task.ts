@@ -9,4 +9,16 @@ export interface Task {
   updatedAt?: string
 }
 
-// interface GetTaskResponse {}
+export interface CreateTaskParams {
+  campaign_id: string
+  submission_url: string
+}
+
+export interface CreateTaskResponse {
+  status: string
+  message: string
+  data: {
+    task: Task
+    isNewTask: boolean
+  }
+}

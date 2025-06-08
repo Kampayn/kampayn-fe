@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { Users, Copy, Loader } from 'lucide-vue-next'
+import { onMounted, watch } from 'vue'
+import { Users, Copy, Loader, Send, Loader2 } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
 import { toast } from 'vue-sonner'
+import { storeToRefs } from 'pinia'
+import { useClipboard } from '@vueuse/core'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -12,12 +14,19 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import type { Task } from '@/types/task'
+import { useTaskStore } from '@/stores/task'
 
 interface Props {
   task: Task
+  campaignId: string
 }
 
 const props = defineProps<Props>()
+
+const { copy, copied } = useClipboard()
+
+const taskStore = useTaskStore()
+const { isLoading } = storeToRefs(taskStore)
 
 // Schema validasi untuk URL submission
 const formSchema = toTypedSchema(
@@ -48,23 +57,24 @@ const { handleSubmit, meta, setFieldValue } = useForm({
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    // TODO: Implement API call to update task submission
-    console.log('Submitting:', values)
-    toast.success('Submission berhasil dikirim!')
+    await taskStore.createOrUpdateTask({
+      campaign_id: props.campaignId,
+      submission_url: values.submission_url,
+    })
   } catch (error) {
-    toast.error('Gagal mengirim submission')
-    console.error('Submission error:', error)
+    console.warn(error)
+    toast.error('Gagal menyimpan data')
   }
 })
 
-const copyToClipboard = async () => {
-  // try {
-  //   await navigator.clipboard.writeText(props.task.submission_url)
-  //   toast.success('URL berhasil disalin!')
-  // } catch (error) {
-  //   toast.error('Gagal menyalin URL')
-  // }
-}
+watch(
+  copied,
+  (value) => {
+    if (value) {
+      toast.success('Berhasil menyalin URL')
+    }
+  },
+)
 
 onMounted(() => {
   if (props.task.submission_url !== '') {
@@ -91,50 +101,40 @@ onMounted(() => {
           </Badge>
         </div>
 
-        <form @submit.prevent="onSubmit">
-          <FormField v-slot="{ componentField }" name="submission_url">
-            <FormItem>
+        <form @submit.prevent="onSubmit" class="flex items-end gap-2 w-full">
+          <FormField v-slot="{ componentField }" name="submission_url" class="flex-1">
+            <FormItem class="w-full">
               <FormLabel>Link Google Drive</FormLabel>
-              <div class="flex space-x-2">
-                <FormControl>
-                  <Input
-                    type="url"
-                    placeholder="https://instagram.com/p/example..."
-                    class="flex-1"
-                    v-bind="componentField"
-                  />
-                </FormControl>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  @click="copyToClipboard"
-                  :disabled="!task.submission_url"
-                >
-                  <Copy class="h-4 w-4" />
-                </Button>
-              </div>
+              <FormControl>
+                <Input
+                  type="url"
+                  placeholder="https://drive.google.com/file/d/..."
+                  :readonly="task.status !== 'rejected'"
+                  v-bind="componentField"
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           </FormField>
 
-          <div class="flex justify-end space-x-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              class="text-red-600 border-red-200 hover:bg-red-50"
-            >
-              Delete
-            </Button>
-            <Button
-              type="submit"
-              class="bg-teal-600 hover:bg-teal-700 text-white"
-              :disabled="!meta.valid"
-            >
-              <Loader v-if="meta.pending" class="mr-2 h-4 w-4 animate-spin" />
-              {{ meta.pending ? 'Sending...' : 'Send' }}
-            </Button>
-          </div>
+          <Button
+            v-if="task.status === 'rejected'"
+            type="submit"
+            size="icon"
+            :disabled="!meta.valid || isLoading"
+          >
+            <Loader2 v-if="isLoading" class="animate-spin size-4" />
+            <Send v-else class="size-4" />
+          </Button>
+          <Button
+            v-if="task.status === 'pending'"
+            type="button"
+            size="icon"
+            variant="outline"
+            @click="copy(task.submission_url)"
+          >
+            <Copy class="size-4" />
+          </Button>
         </form>
       </div>
     </CardContent>

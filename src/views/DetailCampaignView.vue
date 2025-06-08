@@ -392,6 +392,7 @@ onMounted(async () => {
     <KAssigment 
       v-if="user.role === 'influencer' && currentCampaign?.my_task" 
       :task="currentCampaign.my_task" 
+      :campaign-id="campaignId"
     />
   </main>
 
