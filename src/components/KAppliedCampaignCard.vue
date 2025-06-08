@@ -132,10 +132,10 @@ const handleCancel = () => {
         <Loader2 v-if="isLoading" class="mr-2 h-4 w-4 animate-spin" />
         {{ isLoading ? 'Canceling...' : 'Cancel Apply' }}
       </Button>
-      <Button v-if="canSubmitContent" class="flex-1" size="sm">
+      <Button v-if="canSubmitContent" @click="$router.push(`/${campaign?.id}`)" class="flex-1" size="sm">
         <FileText class="mr-1 h-4 w-4" />
-        View Brief</Button
-      >
+        View Brief
+      </Button>
     </CardFooter>
   </Card>
 </template>
