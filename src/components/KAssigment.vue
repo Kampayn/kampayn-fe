@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, watch } from 'vue'
-import { Users, Copy, Loader, Send, Loader2 } from 'lucide-vue-next'
+import { Users, Copy, Loader, Send, Loader2, CheckCircle, XCircle } from 'lucide-vue-next'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import * as z from 'zod'
@@ -95,9 +95,26 @@ onMounted(() => {
       <div class="space-y-6">
         <div class="flex items-center justify-between">
           <span class="font-medium text-gray-900">Submission Status</span>
-          <Badge class="bg-teal-100 text-teal-800 hover:bg-teal-200 flex items-center space-x-2">
+          <Badge 
+            v-if="task?.status === 'pending'"
+            class="bg-teal-100 text-teal-800 hover:bg-teal-200 flex items-center space-x-2"
+          >
             <Loader class="h-3 w-3" />
             <span>Pending Review</span>
+          </Badge>
+          <Badge 
+            v-else-if="task?.status === 'approved'"
+            class="bg-green-100 text-green-800 hover:bg-green-200 flex items-center space-x-2"
+          >
+            <CheckCircle class="h-3 w-3" />
+            <span>Approved</span>
+          </Badge>
+          <Badge 
+            v-else-if="task?.status === 'rejected'"
+            class="bg-red-100 text-red-800 hover:bg-red-200 flex items-center space-x-2"
+          >
+            <XCircle class="h-3 w-3" />
+            <span>Rejected</span>
           </Badge>
         </div>
 
