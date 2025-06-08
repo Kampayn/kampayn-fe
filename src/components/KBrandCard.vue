@@ -7,7 +7,8 @@
             {{ campaign.campaign_name }}
           </CardTitle>
           <p class="text-sm text-muted-foreground">
-            {{ campaign.campaign_type }}
+            {{ getCampaignTypeLabel(campaign?.campaign_type || '') }} • Created on
+            {{ dayjs(campaign?.createdAt).format('D MMM YYYY') }}
           </p>
         </div>
         <Badge :class="statusColor" variant="outline">
@@ -140,9 +141,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useCampaignStore } from '@/stores/campaign'
+import { toast } from 'vue-sonner'
+import dayjs from 'dayjs'
 
 import type { Campaign } from '@/types/campaign'
+import { useCampaignStore } from '@/stores/campaign'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
@@ -156,7 +159,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useModal } from '@/composables/useModal'
 import KDeleteModal from '@/components/KDeleteModal.vue'
-import { toast } from 'vue-sonner'
+import { getCampaignTypeLabel } from '@/utils/enumHelper'
 
 const { openModal } = useModal()
 
