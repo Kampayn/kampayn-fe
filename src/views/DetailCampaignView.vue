@@ -42,25 +42,24 @@ const { currentCampaign } = storeToRefs(campaignStore)
 // Form data
 const totalProfit = ref('')
 const totalCustomer = ref('')
-const totalCost = ref('')
 const isCalculated = ref(false)
 
 // Validation
 const isFormValid = computed(() => {
-  return totalProfit.value && totalCustomer.value && totalCost.value
+  return totalProfit.value && totalCustomer.value && currentCampaign.value?.budget
 })
 
 // ROI Calculation
 const roiValue = computed(() => {
   const profit = parseFloat(totalProfit.value) || 0
-  const cost = parseFloat(totalCost.value) || 0
+  const cost = parseFloat(currentCampaign.value?.budget?.toString() || '0') || 0
   if (cost === 0) return 0
   return (profit / cost) * 100
 })
 
 // CAC Calculation
 const cacValue = computed(() => {
-  const cost = parseFloat(totalCost.value) || 0
+  const cost = parseFloat(currentCampaign.value?.budget?.toString() || '0') || 0
   const customers = parseInt(totalCustomer.value) || 0
   if (customers === 0) return 0
   return cost / customers
@@ -74,7 +73,7 @@ const handleCalculate = () => {
 }
 
 // Watch for form changes to reset calculation
-watch([totalProfit, totalCustomer, totalCost], () => {
+watch([totalProfit, totalCustomer], () => {
   if (isCalculated.value) {
     isCalculated.value = false
   }
@@ -305,9 +304,9 @@ onMounted(async () => {
 
     <!-- Review Task Section -->
     <KReviewTask v-if="user.role === 'brand'" :campaignId />
-
+    
     <!-- Campaign Analysis Form -->
-    <Card class="mb-8" v-if="false">
+    <Card class="mb-8" v-if="currentCampaign?.end_date === dayjs().format('YYYY-MM-DD')">
       <CardHeader>
         <CardTitle class="flex items-center gap-2">
           <Calculator class="h-5 w-5" />
