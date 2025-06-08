@@ -15,6 +15,8 @@ import { Button } from '@/components/ui/button'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import type { Task } from '@/types/task'
 import { useTaskStore } from '@/stores/task'
+import { useUserStore } from '@/stores/user'
+import { useCampaignStore } from '@/stores/campaign'
 
 interface Props {
   task: Task
@@ -27,6 +29,11 @@ const { copy, copied } = useClipboard()
 
 const taskStore = useTaskStore()
 const { isLoading } = storeToRefs(taskStore)
+
+const userStore = useUserStore()
+const { user } = storeToRefs(userStore)
+
+const campaignStore = useCampaignStore()
 
 // Schema validasi untuk URL submission
 const formSchema = toTypedSchema(
@@ -57,10 +64,12 @@ const { handleSubmit, meta, setFieldValue } = useForm({
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    await taskStore.createOrUpdateTask({
+    const isSuccess = await taskStore.createOrUpdateTask({
       campaign_id: props.campaignId,
       submission_url: values.submission_url,
     })
+
+    if (isSuccess) campaignStore.getById(props.campaignId, user.value.role)
   } catch (error) {
     console.warn(error)
     toast.error('Gagal menyimpan data')
