@@ -28,6 +28,15 @@ export interface GetApplicationResponse {
   }
 }
 
+export interface UpdateApplicationParams {
+  id: string
+  status: 'accepted' | 'rejected'
+}
+
+export interface UpdateApplicationResponse {
+  message: string
+}
+
 export interface DeleteApplicationResponse {
   message: string
 }

@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { toast } from 'vue-sonner'
 
 import applicationService from '@/services/application'
-import type { Application } from '@/types/application'
+import type { Application, UpdateApplicationParams } from '@/types/application'
 
 export const useApplicationStore = defineStore('application', () => {
   const applications = ref<Application[]>([])
@@ -51,6 +51,25 @@ export const useApplicationStore = defineStore('application', () => {
     }
   }
 
+  const update = async (params: UpdateApplicationParams): Promise<boolean> => {
+    isLoading.value = true
+    try {
+      const result = await applicationService.update(params)
+      if (!result.success) {
+        toast.error(result.error)
+        return false
+      }
+      toast.success(result.data.message)
+      return true
+    } catch (error) {
+      toast.error('Terjadi kesalahan saat mengupdate application')
+      console.log(error)
+      return false
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   const cancel = async (id: string): Promise<boolean> => {
     isLoading.value = true
     try {
@@ -71,5 +90,5 @@ export const useApplicationStore = defineStore('application', () => {
     }
   }
 
-  return { applications, isLoading, apply, get, cancel }
+  return { applications, isLoading, apply, get, update, cancel }
 })

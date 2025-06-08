@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { Users, Plus } from 'lucide-vue-next'
+import { Users, Plus, Loader2 } from 'lucide-vue-next'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useCampaignStore } from '@/stores/campaign'
+import { useApplicationStore } from '@/stores/application'
+import { toast } from 'vue-sonner'
 
 interface Props {
   campaignId: string
@@ -16,8 +18,30 @@ const props = defineProps<Props>()
 const campaignStore = useCampaignStore()
 const { applications } = storeToRefs(campaignStore)
 
-onMounted(() => {
-  campaignStore.getApplications(props.campaignId)
+const applicationStore = useApplicationStore()
+
+const selectedApplicationId = ref('')
+
+const pendingCount = computed(() => {
+  return applications.value.filter((app) => app.status === 'applied').length
+})
+
+const handleUpdateStatus = async (id: string, status: 'accepted' | 'rejected') => {
+  selectedApplicationId.value = id
+
+  try {
+    const isSuccess = await applicationStore.update({ id, status })
+    if (isSuccess) await campaignStore.getApplications(props.campaignId)
+  } catch (error) {
+    toast.error('Gagal memperbarui status aplikasi')
+    console.warn(error)
+  } finally {
+    selectedApplicationId.value = ''
+  }
+}
+
+onMounted(async () => {
+  await campaignStore.getApplications(props.campaignId)
 })
 </script>
 
@@ -48,7 +72,7 @@ onMounted(() => {
               <th class="text-left py-3 px-4 font-medium text-gray-600">Action</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody v-if="pendingCount > 0">
             <tr
               v-for="(row, index) in applications"
               :key="row.id"
@@ -77,13 +101,46 @@ onMounted(() => {
               </td>
               <td class="py-4 px-4">
                 <div v-if="row.status === 'applied'" class="flex gap-2">
-                  <Button size="sm">Accept</Button>
-                  <Button size="sm" variant="destructive">Reject</Button>
+                  <Button
+                    @click="handleUpdateStatus(row.id, 'accepted')"
+                    size="sm"
+                    :disabled="selectedApplicationId === row.id"
+                  >
+                    <Loader2
+                      v-if="selectedApplicationId === row.id"
+                      class="mr-2 h-4 w-4 animate-spin"
+                    />
+                    {{ selectedApplicationId === row.id ? 'Accepting...' : 'Accept' }}
+                  </Button>
+                  <Button
+                    @click="handleUpdateStatus(row.id, 'rejected')"
+                    size="sm"
+                    :disabled="selectedApplicationId === row.id"
+                    variant="destructive"
+                  >
+                    <Loader2
+                      v-if="selectedApplicationId === row.id"
+                      class="mr-2 h-4 w-4 animate-spin"
+                    />
+                    {{ selectedApplicationId === row.id ? 'Rejecting...' : 'Reject' }}
+                  </Button>
                 </div>
               </td>
             </tr>
           </tbody>
+
         </table>
+        
+        <!-- Empty State -->
+        <div v-if="pendingCount === 0" class="flex flex-col items-center justify-center py-12 text-center">
+          <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <Users class="h-8 w-8 text-gray-400" />
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">No Applications Yet</h3>
+          <p class="text-gray-500 mb-4 max-w-sm">
+            There are no pending applications for this campaign. Applications will appear here when influencers apply.
+          </p>
+        </div>
       </div>
     </CardContent>
   </Card>

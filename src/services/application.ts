@@ -2,11 +2,18 @@ import { AxiosError } from 'axios'
 
 import { api } from '@/lib/axios'
 import type { Result, ApiError } from '@/types/common'
-import type { CreateApplicationResponse, DeleteApplicationResponse, GetApplicationResponse } from '@/types/application'
+import type {
+  CreateApplicationResponse,
+  DeleteApplicationResponse,
+  GetApplicationResponse,
+  UpdateApplicationParams,
+  UpdateApplicationResponse,
+} from '@/types/application'
 
 interface ApplicationService {
   post: (campaign_id: string) => Promise<Result<CreateApplicationResponse, string>>
   get: () => Promise<Result<GetApplicationResponse, string>>
+  update: (params: UpdateApplicationParams) => Promise<Result<UpdateApplicationResponse, string>>
   delete: (id: string) => Promise<Result<DeleteApplicationResponse, string>>
 }
 
@@ -31,6 +38,21 @@ const applicationService: ApplicationService = {
       return { success: false, error: errorMessage }
     }
   },
+  update: async (
+    params: UpdateApplicationParams,
+  ): Promise<Result<UpdateApplicationResponse, string>> => {
+    try {
+      const response = await api.patch<UpdateApplicationResponse>(
+        `/applications/${params.id}/status`,
+        { status: params.status },
+      )
+      return { success: true, data: response.data }
+    } catch (error) {
+      const axiosError = error as AxiosError<ApiError>
+      const errorMessage = axiosError.response?.data?.message || 'Gagal mengupdate application'
+      return { success: false, error: errorMessage }
+    }
+  },
   delete: async (id: string): Promise<Result<DeleteApplicationResponse, string>> => {
     try {
       const response = await api.delete<DeleteApplicationResponse>(`/applications/${id}`)
@@ -40,7 +62,7 @@ const applicationService: ApplicationService = {
       const errorMessage = axiosError.response?.data?.message || 'Gagal menghapus application'
       return { success: false, error: errorMessage }
     }
-  }
+  },
 }
 
 export default applicationService
