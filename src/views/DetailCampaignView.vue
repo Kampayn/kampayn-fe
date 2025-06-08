@@ -389,7 +389,10 @@ onMounted(async () => {
 
     <!-- <KApplyCard v-if="user.role === 'influencer'" /> -->
 
-    <KAssigment v-if="user.role === 'influencer'" />
+    <KAssigment 
+      v-if="user.role === 'influencer' && currentCampaign?.my_task" 
+      :task="currentCampaign.my_task" 
+    />
   </main>
 
   <KFooter />

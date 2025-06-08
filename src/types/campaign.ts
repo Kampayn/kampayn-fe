@@ -1,4 +1,5 @@
 import type { Application } from "./application"
+import type { Task } from "./task"
 
 interface BrandProfile {
   id: string
@@ -39,6 +40,7 @@ export interface Campaign {
   createdAt: string // Or Date
   updatedAt: string // Or Date
   brandUser?: BrandUser
+  my_task: Task
 }
 
 interface Pagination {
