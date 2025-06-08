@@ -23,7 +23,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { useUserStore } from '@/stores/user'
 import KAssigment from '@/components/KAssigment.vue'
-import KApplyCard from '@/components/KApplyCard.vue'
 import KAnalysis from '@/components/KAnalysisResult.vue'
 import type { ReviewRow } from '@/types/review'
 import KReviewTask from '@/components/KReviewTask.vue'
@@ -388,9 +387,9 @@ onMounted(async () => {
 
     <KAnalysis v-if="isCalculated && isFormValid" :roiValue="roiValue" :cacValue="cacValue" />
 
-    <KApplyCard v-if="user.role === 'influencer'" />
+    <!-- <KApplyCard v-if="user.role === 'influencer'" /> -->
 
-    <KAssigment v-if="user.role === 'influencer' && false" />
+    <KAssigment v-if="user.role === 'influencer'" />
   </main>
 
   <KFooter />
