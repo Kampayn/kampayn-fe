@@ -28,19 +28,12 @@ const formSchema = toTypedSchema(
       .url('Format URL tidak valid')
       .refine(
         (url) => {
-          // Validasi untuk platform media sosial umum
-          const validDomains = [
-            'instagram.com',
-            'tiktok.com',
-            'youtube.com',
-            'twitter.com',
-            'facebook.com',
-            'linkedin.com',
-          ]
+          // Validasi untuk platform penyimpanan umum
+          const validDomains = ['drive.google.com']
           return validDomains.some((domain) => url.includes(domain))
         },
         {
-          message: 'URL harus dari platform media sosial yang valid',
+          message: 'URL harus dari url yang valid',
         },
       ),
   }),
@@ -101,7 +94,7 @@ onMounted(() => {
         <form @submit.prevent="onSubmit">
           <FormField v-slot="{ componentField }" name="submission_url">
             <FormItem>
-              <FormLabel>Link Submission</FormLabel>
+              <FormLabel>Link Google Drive</FormLabel>
               <div class="flex space-x-2">
                 <FormControl>
                   <Input
