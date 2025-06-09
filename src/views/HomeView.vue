@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
-import { Facebook as FacebookIcon, Instagram as InstagramIcon } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import KHeader from '@/components/KHeader.vue'
 import KFooter from '@/components/KFooter.vue'
@@ -111,54 +109,46 @@ import { Badge } from '@/components/ui/badge'
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="border p-6 rounded-lg">
             <p class="mb-4">
-              "Saya sering main game di sini, PC-nya sangat cepat dan nyaman! Kursinya ergonomis,
-              cocok untuk gaming seharian. Selain itu, internetnya stabil banget."
+              “Sebagai pemilik brand lokal fashion, saya terbantu banget lewat Kampaiyn. 
+              Saya bisa temukan influencer dengan gaya yang sesuai brand saya. 
+              Hasil kontennya keren dan bikin brand saya lebih dikenal.”
             </p>
-            <p class="font-semibold">— Dimas, Gamer</p>
+            <p class="font-semibold">— Ayu, Pemilik Butik Handmade</p>
           </div>
           <div class="border p-6 rounded-lg">
             <p class="mb-4">
-              "Studio livestream di sini luar biasa! Semua alat sudah tersedia mulai dari kamera
-              hingga lighting profesional. Saya bisa langsung siaran tanpa perlu repot membawa
-              perlengkapan sendiri. Internetnya juga super cepat."
+              “Kampaiyn memudahkan saya sebagai beauty creator untuk terhubung dengan brand yang tepat. 
+              Saya bisa pilih campaign yang sesuai niche dan audiens saya.”
             </p>
-            <p class="font-semibold">— Nina, Streamer</p>
+            <p class="font-semibold">— Nadia, Beauty Content Creator</p>
           </div>
           <div class="border p-6 rounded-lg">
             <p class="mb-4">
-              "Saya suka tempat ini karena fasilitasnya lengkap dan harganya terjangkau. Net Cafe
-              dan ruang streaming-nya bersih, modern, dan staff-nya ramah. Sangat direkomendasikan!"
+              “Saya sempat ragu bisa promosiin produk snack saya lewat konten lucu. 
+              Tapi ternyata, lewat Kampaiyn, banyak creator komedi yang bisa bikin produk saya viral dengan cara unik.”
             </p>
-            <p class="font-semibold">— Rizky, Freelancer</p>
+            <p class="font-semibold">— Tomi, Pemilik Snack Kekinian</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="py-16 text-center">
-      <div class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold mb-4">Tunggu apa lagi?</h2>
-        <p class="text-gray-600 mb-8">Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
+    <section
+      class="py-20 text-center bg-cover bg-center bg-no-repeat relative"
+      style="background-image: url('/assets/illustration/cta-bg.png')"
+    >
+      <!-- Overlay putih dengan transparansi -->
+      <div class="absolute inset-0 bg-white/80"></div>
 
-        <div class="flex justify-center space-x-8 mb-8">
-          <RouterLink to="#" class="border rounded-lg p-3 hover:bg-gray-50">
-            <FacebookIcon class="h-8 w-8 text-blue-600" />
-          </RouterLink>
-          <RouterLink to="#" class="border rounded-lg p-3 hover:bg-gray-50">
-            <InstagramIcon class="h-8 w-8 text-pink-600" />
-          </RouterLink>
-          <!-- <RouterLink to="#" class="border rounded-lg p-3 hover:bg-gray-50">
-              <img src="/tiktok-icon.png" alt="TikTok" width="32" height="32" />
-            </RouterLink> -->
-          <!-- <RouterLink to="#" class="border rounded-lg p-3 hover:bg-gray-50">
-              <img src="/google-icon.png" alt="Google" width="32" height="32" />
-            </RouterLink> -->
-        </div>
-
+      <!-- Konten CTA -->
+      <div class="relative container mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-4 text-gray-900">Tunggu apa lagi?</h2>
+        <p class="text-gray-600 mb-8">Mulai perjalananmu bersama kami hari ini!</p>
         <Button> Buat Akun </Button>
       </div>
     </section>
+
   </main>
 
   <KFooter />
