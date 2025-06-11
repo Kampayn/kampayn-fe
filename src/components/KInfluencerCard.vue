@@ -1,13 +1,22 @@
 <!-- src/components/InfluencerCard.vue -->
 <script setup lang="ts">
-import { ref } from 'vue'
-import { AlertCircle, CheckCircle, TrendingUp, Copy, RotateCcw } from 'lucide-vue-next'
+import { ref, watch } from 'vue'
+import {
+  AlertCircle,
+  CheckCircle,
+  TrendingUp,
+  Copy,
+  RotateCcw,
+  Instagram,
+} from 'lucide-vue-next'
+import { useClipboard } from '@vueuse/core'
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import type { InfluencerCard } from '@/types/recommendation'
 import type { Campaign } from '@/types/campaign'
+import { toast } from 'vue-sonner'
 
 interface Props {
   influencer: InfluencerCard
@@ -16,8 +25,10 @@ interface Props {
 
 const props = defineProps<Props>()
 
+const { copy, copied } = useClipboard()
+
 const isFlipped = ref(false)
-const copySuccess = ref(false)
+const showInstagramButton = ref(false)
 
 const collaborationMessage = `Hi Kak @${props.influencer.username}! Tertarik kolaborasi dalam kampanye ${props.campaign.campaign_name}? Cek detailnya di platform Kampaiyn ya! \n https://kampayn.web.id/${props.campaign.id}`
 
@@ -40,28 +51,36 @@ function handleBackClick() {
   isFlipped.value = false
 }
 
-async function copyToClipboard() {
-  try {
-    await navigator.clipboard.writeText(collaborationMessage)
-    copySuccess.value = true
-    setTimeout(() => {
-      copySuccess.value = false
-    }, 2000)
-  } catch (err) {
-    console.error('Failed to copy text: ', err)
-  }
+function copyMessage() {
+  copy(collaborationMessage)
 }
+
+function openInstagram() {
+  window.open(`https://ig.me/m/${props.influencer.username}`, '_blank')
+}
+
+watch(copied, (value) => {
+  if (value) {
+    toast.success('Success copied text')
+    // Show Instagram button after 1 second
+    setTimeout(() => {
+      showInstagramButton.value = true
+    }, 1000)
+  }
+})
 </script>
 
 <template>
   <div class="relative h-[248px] perspective-1000">
     <!-- Card Container with 3D Transform -->
-    <div 
+    <div
       class="relative w-full h-full transition-transform duration-700 transform-style-preserve-3d"
       :class="{ 'rotate-y-180': isFlipped }"
     >
       <!-- Front Side -->
-      <div class="absolute inset-0 backface-hidden flex flex-col rounded-lg border bg-white p-4 shadow-sm">
+      <div
+        class="absolute inset-0 backface-hidden flex flex-col rounded-lg border bg-white p-4 shadow-sm"
+      >
         <div class="flex items-center gap-3">
           <Avatar class="h-16 w-16">
             <AvatarFallback class="bg-green-100 font-medium text-green-500">
@@ -83,7 +102,10 @@ async function copyToClipboard() {
           >
         </div>
 
-        <div v-if="influencer.is_verified" class="mt-1 flex items-center text-sm text-muted-foreground">
+        <div
+          v-if="influencer.is_verified"
+          class="mt-1 flex items-center text-sm text-muted-foreground"
+        >
           <CheckCircle class="mr-1 size-3 text-primary" />
           <span>Kampayn Verified</span>
         </div>
@@ -102,28 +124,38 @@ async function copyToClipboard() {
       </div>
 
       <!-- Back Side -->
-      <div class="absolute inset-0 backface-hidden rotate-y-180 flex flex-col rounded-lg border bg-gradient-to-br from-blue-50 to-purple-50 p-4 shadow-sm">
+      <div
+        class="absolute inset-0 backface-hidden rotate-y-180 flex flex-col rounded-lg border bg-gradient-to-br from-blue-50 to-purple-50 p-4 shadow-sm"
+      >
         <div class="flex items-center justify-between mb-1">
           <h3 class="text-lg font-semibold text-gray-800">Collaboration Message</h3>
           <Button variant="ghost" size="sm" @click="handleBackClick">
             <RotateCcw class="size-3" />
           </Button>
         </div>
-        
+
         <div class="flex-1 flex flex-col justify-center overflow-hidden">
-          <div class="bg-white rounded-lg px-2 py-1 max-h-[124px] border border-gray-200 mb-4 overflow-y-auto">
+          <div
+            class="bg-white rounded-lg px-2 py-1 max-h-[124px] border border-gray-200 mb-4 overflow-y-auto"
+          >
             <p class="text-sm text-gray-700 leading-relaxed">
               {{ collaborationMessage }}
             </p>
           </div>
-          
-          <Button 
-            @click="copyToClipboard" 
+
+          <Button
+            v-if="!showInstagramButton"
+            @click="copyMessage"
             class="w-full"
-            :class="{ 'bg-green-600 hover:bg-green-700': copySuccess }"
+            :class="{ 'bg-green-600 hover:bg-green-700': copied }"
           >
-            <Copy class="size-4 mr-2" />
-            {{ copySuccess ? 'Copied!' : 'Copy Message' }}
+            <Copy class="size-4 mr-1" />
+            {{ copied ? 'Copied!' : 'Copy Message' }}
+          </Button>
+
+          <Button v-else @click="openInstagram" class="w-full" variant="outline">
+            <Instagram class="size-4 mr-1" />
+            Open Instagram
           </Button>
         </div>
       </div>
