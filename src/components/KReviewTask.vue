@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import { onMounted, computed, ref } from 'vue'
+import { toast } from 'vue-sonner'
 import { ExternalLink, Users } from 'lucide-vue-next'
 
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useCampaignStore } from '@/stores/campaign'
-import { storeToRefs } from 'pinia'
-import { onMounted, computed } from 'vue'
+import { useTaskStore } from '@/stores/task'
 
 interface Props {
   campaignId: string
@@ -17,9 +19,27 @@ const props = defineProps<Props>()
 const campaignStore = useCampaignStore()
 const { tasks } = storeToRefs(campaignStore)
 
+const taskStore = useTaskStore()
+
+const selectedTaskId = ref('')
+
 const tasksCount = computed(() => {
   return tasks.value.length
 })
+
+const handleUpdateStatus = async (id: string, status: 'approved' | 'rejected') => {
+  selectedTaskId.value = id
+
+  try {
+    const isSuccess = await taskStore.update({ id, status })
+    if (isSuccess) await campaignStore.getTasks(props.campaignId)
+  } catch (error) {
+    toast.error('Gagal memperbarui status aplikasi')
+    console.warn(error)
+  } finally {
+    selectedTaskId.value = ''
+  }
+}
 
 const getStatusBadgeVariant = (statusType: string) => {
   switch (statusType) {
@@ -96,24 +116,53 @@ onMounted(async () => {
                 </a>
               </td>
               <td class="py-4 px-4">
-                <div v-if="row.status === 'pending'" class="flex gap-2">
+                <!-- <div v-if="row.status === 'pending'" class="flex gap-2">
                   <Button size="sm">Accept</Button>
                   <Button size="sm" variant="destructive">Reject</Button>
+                </div> -->
+                <div v-if="row.status === 'pending'" class="flex gap-2">
+                  <Button
+                    @click="handleUpdateStatus(row.id, 'approved')"
+                    size="sm"
+                    :disabled="selectedTaskId === row.id"
+                  >
+                    <Loader2
+                      v-if="selectedTaskId === row.id"
+                      class="mr-2 h-4 w-4 animate-spin"
+                    />
+                    {{ selectedTaskId === row.id ? 'Accepting...' : 'Accept' }}
+                  </Button>
+                  <Button
+                    @click="handleUpdateStatus(row.id, 'rejected')"
+                    size="sm"
+                    :disabled="selectedTaskId === row.id"
+                    variant="destructive"
+                  >
+                    <Loader2
+                      v-if="selectedTaskId === row.id"
+                      class="mr-2 h-4 w-4 animate-spin"
+                    />
+                    {{ selectedTaskId === row.id ? 'Rejecting...' : 'Reject' }}
+                  </Button>
                 </div>
                 <Button v-else size="sm" variant="outline">Send Message</Button>
               </td>
             </tr>
           </tbody>
         </table>
-        
+
         <!-- Empty State -->
-        <div v-if="tasksCount === 0" class="flex flex-col items-center justify-center py-12 text-center">
+        <div
+          v-if="tasksCount === 0"
+          class="flex flex-col items-center justify-center py-12 text-center"
+        >
           <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
             <Users class="h-8 w-8 text-gray-400" />
           </div>
           <h3 class="text-lg font-medium text-gray-900 mb-2">No Tasks Yet</h3>
           <p class="text-gray-500 mb-4 max-w-sm">
-            There are no tasks to review for this campaign. Tasks will appear here when influencers submit their work.
+            There are no tasks to review for this campaign. Tasks will appear here when influencers
+            submit their work.
           </p>
         </div>
       </div>

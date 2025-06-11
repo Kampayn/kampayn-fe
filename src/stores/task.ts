@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { toast } from 'vue-sonner'
 
 import taskService from '@/services/task'
-import type { CreateTaskParams } from '@/types/task'
+import type { CreateTaskParams, UpdateTaskParams } from '@/types/task'
 
 export const useTaskStore = defineStore('task', () => {
   const isLoading = ref(false)
@@ -28,5 +28,24 @@ export const useTaskStore = defineStore('task', () => {
     }
   }
 
-  return { isLoading, createOrUpdateTask }
+  const update = async (params: UpdateTaskParams): Promise<boolean> => {
+    isLoading.value = true
+    try {
+      const result = await taskService.patch(params)
+      if (!result.success) {
+        toast.error(result.error)
+        return false
+      }
+      toast.success(result.data.message)
+      return true
+    } catch (error) {
+      toast.error('Terjadi kesalahan saat memperbarui task')
+      console.log(error)
+      return false
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  return { isLoading, createOrUpdateTask, update }
 })

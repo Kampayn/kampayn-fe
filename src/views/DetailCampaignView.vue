@@ -308,7 +308,11 @@ onMounted(async () => {
     <!-- Campaign Analysis Form -->
     <Card
       class="mb-8"
-      v-if="user.role === 'brand' && currentCampaign?.end_date && currentCampaign.end_date <= dayjs().format('YYYY-MM-DD')"
+      v-if="
+        user.role === 'brand' &&
+        currentCampaign?.end_date &&
+        currentCampaign.end_date <= dayjs().format('YYYY-MM-DD')
+      "
     >
       <CardHeader>
         <CardTitle class="flex items-center gap-2">

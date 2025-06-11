@@ -25,3 +25,16 @@ export interface CreateTaskResponse {
     isNewTask: boolean
   }
 }
+
+export interface UpdateTaskParams {
+  id: string
+  status: 'approved' | 'rejected'
+}
+
+export interface UpdateTaskResponse {
+  status: string
+  message: string
+  data: {
+    task: Task
+  }
+}
