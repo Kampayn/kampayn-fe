@@ -91,6 +91,7 @@ onMounted(async () => {
         v-for="(influencer, index) in combinedInfluencer"
         :key="index"
         :influencer="influencer"
+        :campaign="currentCampaign!"
       />
     </div>
   </DialogContent>
