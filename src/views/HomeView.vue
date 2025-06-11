@@ -25,7 +25,7 @@ import { Badge } from '@/components/ui/badge'
         </div>
         <div class="relative h-[300px] md:h-[400px]">
           <img
-            src="/assets/illustration/hero.png"
+            src="/assets/illustration/hero.webp"
             alt="Team collaboration"
             class="object-cover rounded-lg w-full h-full"
           />
