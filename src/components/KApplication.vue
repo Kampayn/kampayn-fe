@@ -1,19 +1,23 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { Users, Plus, Loader2 } from 'lucide-vue-next'
+import { Users, Loader2, UserSearchIcon } from 'lucide-vue-next'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useCampaignStore } from '@/stores/campaign'
 import { useApplicationStore } from '@/stores/application'
 import { toast } from 'vue-sonner'
+import KInfluencerModal from '@/components/KInfluencerModal.vue'
+import { useModal } from '@/composables/useModal'
 
 interface Props {
   campaignId: string
 }
 
 const props = defineProps<Props>()
+
+const { openModal } = useModal()
 
 const campaignStore = useCampaignStore()
 const { applications } = storeToRefs(campaignStore)
@@ -25,6 +29,15 @@ const selectedApplicationId = ref('')
 const pendingCount = computed(() => {
   return applications.value.filter((app) => app.status === 'applied').length
 })
+
+const handleOpenInfluencerModal = () => {
+  openModal({
+    component: KInfluencerModal,
+    props: {
+      campaignId: props.campaignId,
+    },
+  })
+}
 
 const handleUpdateStatus = async (id: string, status: 'accepted' | 'rejected') => {
   selectedApplicationId.value = id
@@ -54,9 +67,9 @@ onMounted(async () => {
           Applications
         </div>
 
-        <Button>
-          <Plus class="h-5 w-5" />
-          Tambah
+        <Button @click="handleOpenInfluencerModal">
+          <UserSearchIcon class="h-5 w-5" />
+          Find Influencer
         </Button>
       </CardTitle>
     </CardHeader>

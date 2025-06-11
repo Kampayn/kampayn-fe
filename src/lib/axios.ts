@@ -8,6 +8,11 @@ export const api = axios.create({
   timeout: 30000,
 })
 
+export const apiML = axios.create({
+  baseURL: import.meta.env.VITE_API_ML_BASE_URL,
+  timeout: 30000,
+})
+
 // Keep track of refreshing state to prevent multiple refresh requests
 let isRefreshing = false
 // Store pending requests to retry after token refresh
