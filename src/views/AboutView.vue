@@ -33,14 +33,14 @@ import KFooter from '@/components/KFooter.vue'
             <strong>Visi:</strong> Mendorong pertumbuhan UMKM di Indonesia melalui pemasaran digital
             yang efektif dan terjangkau.
           </p>
-          <p class="text-lg text-gray-600">
+          <div class="text-lg text-gray-600">
             <strong>Misi:</strong>
             <ul class="list-disc list-inside ml-4">
               <li>Menyediakan akses ke jaringan influencer yang luas.</li>
               <li>Mempermudah proses negosiasi dan pelaksanaan kampanye.</li>
               <li>Menghadirkan dashboard analitik untuk memantau performa iklan.</li>
             </ul>
-          </p>
+          </div>
         </div>
       </div>
     </section>
