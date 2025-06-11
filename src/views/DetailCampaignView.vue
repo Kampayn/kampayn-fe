@@ -304,9 +304,12 @@ onMounted(async () => {
 
     <!-- Review Task Section -->
     <KReviewTask v-if="user.role === 'brand'" :campaignId />
-    
+
     <!-- Campaign Analysis Form -->
-    <Card class="mb-8" v-if="currentCampaign?.end_date === dayjs().format('YYYY-MM-DD')">
+    <Card
+      class="mb-8"
+      v-if="user.role === 'brand' && currentCampaign?.end_date && currentCampaign.end_date <= dayjs().format('YYYY-MM-DD')"
+    >
       <CardHeader>
         <CardTitle class="flex items-center gap-2">
           <Calculator class="h-5 w-5" />
@@ -362,9 +365,9 @@ onMounted(async () => {
 
     <!-- <KApplyCard v-if="user.role === 'influencer'" /> -->
 
-    <KAssigment 
-      v-if="user.role === 'influencer' && currentCampaign?.my_task" 
-      :task="currentCampaign.my_task" 
+    <KAssigment
+      v-if="user.role === 'influencer' && currentCampaign?.my_task"
+      :task="currentCampaign.my_task"
       :campaign-id="campaignId"
     />
   </main>
