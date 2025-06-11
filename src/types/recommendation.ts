@@ -13,12 +13,7 @@ export interface GetRecommendationParams {
     | 'Food'
     | 'Fashion'
     | 'Beauty'
-    | 'Health'
-    | 'Sports'
-    | 'Travel'
-    | 'Education'
-    | 'Technology'
-    | 'Entertainment'
+    | 'Lifestyle'
     | 'Other'
   top_n: number
   sort_by: 'Engagement%20Rate'
