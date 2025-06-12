@@ -23,9 +23,12 @@ import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import KHeader from '@/components/KHeader.vue'
 import dayjs from 'dayjs'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 
 const userStore = useUserStore()
-const { user } = storeToRefs(userStore)
+const { user, otherProfile } = storeToRefs(userStore)
 
 // Reactive state variables
 const isEditingBank = ref(false)
@@ -33,14 +36,21 @@ const bankAccount = ref('')
 const showChat = ref(false) // For demonstration
 
 // Computed properties to easily access nested data
-const influencerProfile = computed(() => user.value?.influencerProfile)
-const brandProfile = computed(() => user.value?.brandProfile)
+const uid = computed(() => route.params.id)
+const userData = computed(() => {
+  if (uid.value === 'me') {
+    return user.value
+  }
+  return otherProfile.value
+})
+const influencerProfile = computed(() => userData.value?.influencerProfile)
+const brandProfile = computed(() => userData.value?.brandProfile)
 
 const username = computed(() => {
-  if (user.value.role === 'brand') {
-    return user.value.name
+  if (userData.value?.role === 'brand') {
+    return userData.value.name
   }
-  return `@${user.value.name}`
+  return `@${userData.value?.name}`
 })
 
 // Event Handlers
@@ -62,7 +72,11 @@ const formatNumber = (num: string) => {
 }
 
 onMounted(() => {
-  userStore.fetchProfile()
+  if (uid.value && uid.value !== 'me') {
+    userStore.fetchOtherProfile(uid.value.toString())
+  } else {
+    userStore.fetchProfile()
+  }
 })
 </script>
 
@@ -84,11 +98,15 @@ onMounted(() => {
       <div class="flex items-center gap-6">
         <Avatar class="w-24 h-24">
           <AvatarImage
-            :src="brandProfile?.photo_url || influencerProfile?.photo_url || '/placeholder.svg?height=96&width=96'"
-            :alt="user.name"
+            :src="
+              brandProfile?.photo_url ||
+              influencerProfile?.photo_url ||
+              '/placeholder.svg?height=96&width=96'
+            "
+            :alt="userData?.name"
           />
           <AvatarFallback class="text-2xl font-semibold bg-blue-100 text-blue-600">
-            {{ user.name.charAt(0).toUpperCase() }}
+            {{ userData?.name.charAt(0).toUpperCase() }}
           </AvatarFallback>
         </Avatar>
 
@@ -97,12 +115,13 @@ onMounted(() => {
             <h1 class="text-3xl font-bold text-gray-900">{{ username }}</h1>
             <Badge v-if="influencerProfile?.categories?.length">
               {{
-                influencerProfile?.categories?.[0].charAt(0).toUpperCase() + influencerProfile?.categories?.[0].slice(1)
+                influencerProfile?.categories?.[0].charAt(0).toUpperCase() +
+                influencerProfile?.categories?.[0].slice(1)
               }}
             </Badge>
           </div>
 
-          <div v-if="user.role === 'influencer'" class="flex items-center gap-2 text-gray-600 mb-3">
+          <div v-if="userData?.role === 'influencer'" class="flex items-center gap-2 text-gray-600 mb-3">
             <MapPin :size="16" />
             <span>Indonesia</span>
           </div>
@@ -116,7 +135,7 @@ onMounted(() => {
     </div>
 
     <!-- Stats Cards -->
-    <div v-if="user.role === 'influencer'" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div v-if="userData?.role === 'influencer'" class="grid grid-cols-1 md:grid-cols-4 gap-4">
       <Card>
         <CardContent class="p-4 text-center">
           <div class="flex items-center justify-center mb-2">
@@ -157,7 +176,9 @@ onMounted(() => {
             <TrendingUp :size="20" class="text-green-500 mr-1" />
             <span class="text-2xl font-bold">
               {{
-                influencerProfile?.instagram_engagement_rate ? `${influencerProfile.instagram_engagement_rate}%` : 'N/A'
+                influencerProfile?.instagram_engagement_rate
+                  ? `${influencerProfile.instagram_engagement_rate}%`
+                  : 'N/A'
               }}
             </span>
           </div>
@@ -199,17 +220,17 @@ onMounted(() => {
               <div class="space-y-3">
                 <div>
                   <p class="text-sm text-gray-600">Email</p>
-                  <p class="font-medium">{{ user.email }}</p>
+                  <p class="font-medium">{{ userData?.email }}</p>
                 </div>
                 <div>
                   <p class="text-sm text-gray-600">Member Since</p>
-                  <p class="font-medium">{{ dayjs(user.createdAt).format('DD MMMM YYYY') }}</p>
+                  <p class="font-medium">{{ dayjs(userData?.createdAt).format('DD MMMM YYYY') }}</p>
                 </div>
               </div>
             </div>
 
             <!-- Brand Information -->
-            <div v-if="user.role === 'brand'" class="space-y-4">
+            <div v-if="userData?.role === 'brand'" class="space-y-4">
               <h3 class="text-lg font-semibold text-gray-900">Brand Information</h3>
               <div class="space-y-3">
                 <div>

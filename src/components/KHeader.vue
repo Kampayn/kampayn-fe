@@ -21,7 +21,7 @@ const { isLoggedIn } = storeToRefs(userStore)
 const links = [
   {
     label: 'Profile',
-    href: '/profile',
+    href: '/profile/me',
     icon: User,
   },
   {

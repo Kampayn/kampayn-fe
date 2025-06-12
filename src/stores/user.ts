@@ -26,6 +26,8 @@ export const useUserStore = defineStore('user', () => {
   const access_token = ref('')
   const refresh_token = ref('')
 
+  const otherProfile = ref<User>()
+
   const storedUser = localStorage.getItem('kampaiyn.auth.user')
   if (storedUser) {
     const userData = JSON.parse(storedUser) as Data
@@ -245,6 +247,30 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const fetchOtherProfile = async (uid: string): Promise<boolean> => {
+    isLoading.value = true
+    try {
+      const result = await userService.fetchOtherProfile(uid)
+      if (!result.success) {
+        toast.error(result.error)
+        return false
+      }
+      toast.success(result.data.message)
+      // Update user data if needed
+      if (result.data.data.user) {
+        otherProfile.value = result.data.data.user
+      }
+
+      return true
+    } catch (error) {
+      toast.error('Terjadi kesalahan saat mengambil data pengguna')
+      console.log(error)
+      return false
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   const logout = () => {
     // TODO Log logout event before clearing user data
     // if (user.value.id) {
@@ -267,6 +293,7 @@ export const useUserStore = defineStore('user', () => {
   return {
     isLoading,
     user,
+    otherProfile,
     access_token,
     refresh_token,
     getUser,
@@ -279,6 +306,7 @@ export const useUserStore = defineStore('user', () => {
     register,
     completeProfile,
     fetchProfile,
+    fetchOtherProfile,
     logout,
   }
 })
