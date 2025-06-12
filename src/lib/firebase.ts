@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getAnalytics, initializeAnalytics } from 'firebase/analytics'
+import { getFirestore } from 'firebase/firestore'
 
 export const firebaseApp = initializeApp({
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -12,5 +13,7 @@ export const firebaseApp = initializeApp({
 })
 
 initializeAnalytics(firebaseApp)
+
+export const db = getFirestore(firebaseApp)
 
 export const analytics = getAnalytics(firebaseApp)

@@ -247,13 +247,13 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  const fetchOtherProfile = async (uid: string): Promise<boolean> => {
+  const fetchOtherProfile = async (uid: string): Promise<User | null> => {
     isLoading.value = true
     try {
       const result = await userService.fetchOtherProfile(uid)
       if (!result.success) {
         toast.error(result.error)
-        return false
+        return null
       }
       toast.success(result.data.message)
       // Update user data if needed
@@ -261,11 +261,11 @@ export const useUserStore = defineStore('user', () => {
         otherProfile.value = result.data.data.user
       }
 
-      return true
+      return result.data.data.user
     } catch (error) {
       toast.error('Terjadi kesalahan saat mengambil data pengguna')
       console.log(error)
-      return false
+      return null
     } finally {
       isLoading.value = false
     }

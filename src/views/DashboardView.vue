@@ -71,13 +71,13 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen flex flex-col">
-    <KHeader>
+    <KHeader variant="outline">
       <template #menus>
         <Button variant="link" as-child>
           <RouterLink to="/dashboard">Dashboard</RouterLink>
         </Button>
         <Button variant="link" as-child>
-          <RouterLink to="/dashboard">Chat</RouterLink>
+          <RouterLink to="/chat">Chat</RouterLink>
         </Button>
       </template>
     </KHeader>

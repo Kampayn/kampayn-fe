@@ -24,6 +24,8 @@ import { storeToRefs } from 'pinia'
 import KHeader from '@/components/KHeader.vue'
 import dayjs from 'dayjs'
 import { useRoute } from 'vue-router'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { db } from '@/lib/firebase'
 
 const route = useRoute()
 
@@ -33,7 +35,6 @@ const { user, otherProfile } = storeToRefs(userStore)
 // Reactive state variables
 const isEditingBank = ref(false)
 const bankAccount = ref('')
-const showChat = ref(false) // For demonstration
 
 // Computed properties to easily access nested data
 const uid = computed(() => route.params.id)
@@ -54,10 +55,25 @@ const username = computed(() => {
 })
 
 // Event Handlers
-const handleChatClick = () => {
-  showChat.value = true
-  // In a real app, this would open a chat interface
-  alert('Chat functionality would be implemented here!')
+const handleChatClick = async() => {
+  const chatRoomId =
+    user.value?.id > otherProfile.value!.id
+      ? `${user.value?.id}_${otherProfile.value?.id}`
+      : `${otherProfile.value?.id}_${user.value?.id}`
+
+  console.log(chatRoomId)
+
+  const chatRoomRef = doc(db, 'chatRooms', chatRoomId)
+  const chatRoomSnap = await getDoc(chatRoomRef)
+
+  // If chat room doesn't exist, create it
+  if (!chatRoomSnap.exists()) {
+    await setDoc(chatRoomRef, {
+      members: [user.value?.id, otherProfile.value?.id],
+      createdAt: dayjs().unix(),
+      updatedAt: dayjs().unix(),
+    })
+  }
 }
 
 const handleSaveBankAccount = () => {
@@ -87,7 +103,7 @@ onMounted(() => {
         <RouterLink to="/dashboard">Dashboard</RouterLink>
       </Button>
       <Button variant="link" as-child>
-        <RouterLink to="/dashboard">Chat</RouterLink>
+        <RouterLink to="/chat">Chat</RouterLink>
       </Button>
     </template>
   </KHeader>
@@ -121,12 +137,15 @@ onMounted(() => {
             </Badge>
           </div>
 
-          <div v-if="userData?.role === 'influencer'" class="flex items-center gap-2 text-gray-600 mb-3">
+          <div
+            v-if="userData?.role === 'influencer'"
+            class="flex items-center gap-2 text-gray-600 mb-3"
+          >
             <MapPin :size="16" />
             <span>Indonesia</span>
           </div>
 
-          <Button @click="handleChatClick">
+          <Button v-if="uid !== 'me'" @click="handleChatClick">
             <MessageCircle :size="16" class="mr-1" />
             Chat Now
           </Button>
