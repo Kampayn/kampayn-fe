@@ -334,14 +334,12 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- Copy template dari CreateCampaignView.vue dengan perubahan title -->
-  <KHeader :menus="['Dashboard', 'About']">
-    <Button variant="outline" as-child>
-      <RouterLink to="/login">Masuk</RouterLink>
-    </Button>
-    <Button as-child>
-      <RouterLink to="/register">Daftar</RouterLink>
-    </Button>
+  <KHeader>
+    <template #menus>
+      <Button variant="link" as-child>
+        <RouterLink to="/dashboard">Dashboard</RouterLink>
+      </Button>
+    </template>
   </KHeader>
 
   <main class="flex-1 container mx-auto px-4 py-8 mt-[72px] max-w-4xl">

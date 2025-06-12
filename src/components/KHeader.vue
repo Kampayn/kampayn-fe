@@ -9,7 +9,6 @@ import { Bell, LogOut, Menu, MessageCircle, User } from 'lucide-vue-next'
 
 interface Props {
   variant?: 'outline' | 'solid'
-  menus?: Array<string>
 }
 
 withDefaults(defineProps<Props>(), {
@@ -61,12 +60,8 @@ const links = [
         </RouterLink>
       </div>
 
-      <div v-if="menus" class="hidden md:flex items-center space-x-8 mx-auto">
-        <Button variant="link" as-child>
-          <RouterLink v-for="(item, index) in menus" :key="index" :to="`/${item}`">
-            {{ item }}
-          </RouterLink>
-        </Button>
+      <div class="hidden md:flex items-center space-x-4 mx-auto">
+        <slot name="menus"></slot>
       </div>
 
       <div v-if="!isLoggedIn" class="flex items-center space-x-4">

@@ -71,7 +71,16 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen flex flex-col">
-    <KHeader :menus="['Dashboard', 'About']" variant="outline" />
+    <KHeader>
+      <template #menus>
+        <Button variant="link" as-child>
+          <RouterLink to="/dashboard">Dashboard</RouterLink>
+        </Button>
+        <Button variant="link" as-child>
+          <RouterLink to="/dashboard">Chat</RouterLink>
+        </Button>
+      </template>
+    </KHeader>
 
     <!-- Main Content -->
     <main class="flex-1 container mx-auto px-4 py-8 mt-[72px]">
@@ -152,5 +161,5 @@ onMounted(() => {
     </main>
 
     <KFooter />
-    </div>
+  </div>
 </template>

@@ -7,7 +7,16 @@ import { Badge } from '@/components/ui/badge'
 </script>
 
 <template>
-  <KHeader :menus="['Dashboard', 'About']" />
+  <KHeader>
+    <template #menus>
+      <Button variant="link" as-child>
+        <RouterLink to="/">Home</RouterLink>
+      </Button>
+      <Button variant="link" as-child>
+        <RouterLink to="/about">About</RouterLink>
+      </Button>
+    </template>
+  </KHeader>
 
   <main class="mt-[72px]">
     <!-- Hero Section -->

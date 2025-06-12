@@ -48,7 +48,13 @@ const tasks = ref([
 </script>
 
 <template>
-  <KHeader :menus="['Dashboard', 'About']" />
+  <KHeader>
+    <template #menus>
+      <Button variant="link" as-child>
+        <RouterLink to="/dashboard">Dashboard</RouterLink>
+      </Button>
+    </template>
+  </KHeader>
 
   <main class="flex-1 container mx-auto px-4 py-8 mt-[72px]">
     <section class="text-center mb-10">

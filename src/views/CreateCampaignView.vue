@@ -333,13 +333,12 @@ const formatCurrency = (amount: number) => {
 </script>
 
 <template>
-  <KHeader :menus="['Dashboard', 'About']">
-    <Button variant="outline" as-child>
-      <RouterLink to="/login">Masuk</RouterLink>
-    </Button>
-    <Button as-child>
-      <RouterLink to="/register">Daftar</RouterLink>
-    </Button>
+  <KHeader>
+    <template #menus>
+      <Button variant="link" as-child>
+        <RouterLink to="/dashboard">Dashboard</RouterLink>
+      </Button>
+    </template>
   </KHeader>
 
   <!-- Main Content -->

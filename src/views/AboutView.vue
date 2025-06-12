@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import KHeader from '@/components/KHeader.vue'
 import KFooter from '@/components/KFooter.vue'
+import { Button } from '@/components/ui/button';
 </script>
 
 <template>
-  <KHeader :menus="['Dashboard', 'About']" />
+  <KHeader>
+    <template #menus>
+      <Button variant="link" as-child>
+        <RouterLink to="/">Home</RouterLink>
+      </Button>
+      <Button variant="link" as-child>
+        <RouterLink to="/about">About</RouterLink>
+      </Button>
+    </template>
+  </KHeader>
 
   <main class="mt-[72px]">
     <!-- About Section -->
@@ -25,9 +35,10 @@ import KFooter from '@/components/KFooter.vue'
             Tentang Kampaiyn
           </h1>
           <p class="text-lg text-gray-600">
-            Kampaiyn adalah platform yang memfasilitasi kolaborasi antara pelaku UMKM dan influencer.
-            Di sini, UMKM dapat menemukan influencer yang tepat untuk mempromosikan produk mereka,
-            sedangkan influencer dapat memilih produk UMKM berkualitas untuk diiklankan kepada audiensnya.
+            Kampaiyn adalah platform yang memfasilitasi kolaborasi antara pelaku UMKM dan
+            influencer. Di sini, UMKM dapat menemukan influencer yang tepat untuk mempromosikan
+            produk mereka, sedangkan influencer dapat memilih produk UMKM berkualitas untuk
+            diiklankan kepada audiensnya.
           </p>
           <p class="text-lg text-gray-600">
             <strong>Visi:</strong> Mendorong pertumbuhan UMKM di Indonesia melalui pemasaran digital
