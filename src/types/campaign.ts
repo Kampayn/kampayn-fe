@@ -41,6 +41,7 @@ export interface Campaign {
   updatedAt: string // Or Date
   brandUser?: BrandUser
   my_task: Task
+  my_application: Application
 }
 
 interface Pagination {

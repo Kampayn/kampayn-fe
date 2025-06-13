@@ -23,15 +23,13 @@ import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import KHeader from '@/components/KHeader.vue'
 import dayjs from 'dayjs'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
-import { db } from '@/lib/firebase'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
+import { useChatNavigation } from '@/composables/useChat'
 
 const route = useRoute()
-const router = useRouter()
-
 const userStore = useUserStore()
 const { user, otherProfile } = storeToRefs(userStore)
+const { createOrNavigateToChat } = useChatNavigation()
 
 // Reactive state variables
 const isEditingBank = ref(false)
@@ -57,30 +55,12 @@ const username = computed(() => {
 
 // Event Handlers
 const handleChatClick = async () => {
-  const chatRoomId =
-    user.value?.id > otherProfile.value!.id
-      ? `${user.value?.id}_${otherProfile.value?.id}`
-      : `${otherProfile.value?.id}_${user.value?.id}`
-
-  console.log(chatRoomId)
-
-  try {
-    const chatRoomRef = doc(db, 'chatRooms', chatRoomId)
-    const chatRoomSnap = await getDoc(chatRoomRef)
-
-    // If chat room doesn't exist, create it
-    if (!chatRoomSnap.exists()) {
-      await setDoc(chatRoomRef, {
-        members: [user.value?.id, otherProfile.value?.id],
-        createdAt: dayjs().unix(),
-        updatedAt: dayjs().unix(),
-      })
-    }
-
-    router.push('/chat')
-  } catch (error) {
-    console.error('Error creating chat room:', error)
+  if (!otherProfile.value?.id) {
+    console.error('No other user profile available')
+    return
   }
+  
+  await createOrNavigateToChat(otherProfile.value.id)
 }
 
 const handleSaveBankAccount = () => {

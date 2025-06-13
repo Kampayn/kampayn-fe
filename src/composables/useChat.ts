@@ -1,8 +1,10 @@
 import { ref, computed, onMounted, type Ref } from 'vue'
 import { useCollection } from 'vuefire'
-import { collection, query, where, orderBy, addDoc, updateDoc, doc, serverTimestamp } from 'firebase/firestore'
+import { collection, query, where, orderBy, addDoc, updateDoc, doc, serverTimestamp, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
+import dayjs from 'dayjs'
 import type { ChatRoom, ChatMessage } from '@/types/chat'
 
 export function useChat() {
@@ -96,5 +98,46 @@ export function useChatMessages(chatRoomId: Ref<string | null>) {
     messagesLoading: computed(() => messagesLoading.value),
     messagesError: computed(() => messagesError.value?.message || null),
     sendMessage
+  }
+}
+
+// Composable for creating or navigating to a chat room
+export function useChatNavigation() {
+  const userStore = useUserStore()
+  const router = useRouter()
+
+  const createOrNavigateToChat = async (otherUserId: string) => {
+    if (!userStore.user?.id) {
+      console.error('User not authenticated')
+      return
+    }
+
+    const chatRoomId =
+      userStore.user.id > otherUserId
+        ? `${userStore.user.id}_${otherUserId}`
+        : `${otherUserId}_${userStore.user.id}`
+
+    try {
+      const chatRoomRef = doc(db, 'chatRooms', chatRoomId)
+      const chatRoomSnap = await getDoc(chatRoomRef)
+
+      // If chat room doesn't exist, create it
+      if (!chatRoomSnap.exists()) {
+        await setDoc(chatRoomRef, {
+          members: [userStore.user.id, otherUserId],
+          createdAt: dayjs().unix(),
+          updatedAt: dayjs().unix(),
+        })
+      }
+
+      router.push('/chat')
+    } catch (error) {
+      console.error('Error creating chat room:', error)
+      throw error
+    }
+  }
+
+  return {
+    createOrNavigateToChat
   }
 }

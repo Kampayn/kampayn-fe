@@ -2,13 +2,14 @@
 import { storeToRefs } from 'pinia'
 import { onMounted, computed, ref } from 'vue'
 import { toast } from 'vue-sonner'
-import { ExternalLink, Users } from 'lucide-vue-next'
+import { ExternalLink, Loader2, Users } from 'lucide-vue-next'
 
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useCampaignStore } from '@/stores/campaign'
 import { useTaskStore } from '@/stores/task'
+import { useChatNavigation } from '@/composables/useChat'
 
 interface Props {
   campaignId: string
@@ -20,6 +21,7 @@ const campaignStore = useCampaignStore()
 const { tasks } = storeToRefs(campaignStore)
 
 const taskStore = useTaskStore()
+const { createOrNavigateToChat } = useChatNavigation()
 
 const selectedTaskId = ref('')
 
@@ -116,20 +118,13 @@ onMounted(async () => {
                 </a>
               </td>
               <td class="py-4 px-4">
-                <!-- <div v-if="row.status === 'pending'" class="flex gap-2">
-                  <Button size="sm">Accept</Button>
-                  <Button size="sm" variant="destructive">Reject</Button>
-                </div> -->
                 <div v-if="row.status === 'pending'" class="flex gap-2">
                   <Button
                     @click="handleUpdateStatus(row.id, 'approved')"
                     size="sm"
                     :disabled="selectedTaskId === row.id"
                   >
-                    <Loader2
-                      v-if="selectedTaskId === row.id"
-                      class="mr-2 h-4 w-4 animate-spin"
-                    />
+                    <Loader2 v-if="selectedTaskId === row.id" class="mr-2 h-4 w-4 animate-spin" />
                     {{ selectedTaskId === row.id ? 'Accepting...' : 'Accept' }}
                   </Button>
                   <Button
@@ -138,14 +133,18 @@ onMounted(async () => {
                     :disabled="selectedTaskId === row.id"
                     variant="destructive"
                   >
-                    <Loader2
-                      v-if="selectedTaskId === row.id"
-                      class="mr-2 h-4 w-4 animate-spin"
-                    />
+                    <Loader2 v-if="selectedTaskId === row.id" class="mr-2 h-4 w-4 animate-spin" />
                     {{ selectedTaskId === row.id ? 'Rejecting...' : 'Reject' }}
                   </Button>
                 </div>
-                <Button v-else size="sm" variant="outline">Send Message</Button>
+                <Button
+                  v-else
+                  @click="createOrNavigateToChat(row.influencer?.id || '')"
+                  size="sm"
+                  variant="outline"
+                >
+                  Send Message
+                </Button>
               </td>
             </tr>
           </tbody>

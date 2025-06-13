@@ -19,7 +19,7 @@ import { useUserStore } from '@/stores/user'
 import { useCampaignStore } from '@/stores/campaign'
 
 interface Props {
-  task: Task
+  task?: Task
   campaignId: string
 }
 
@@ -58,7 +58,7 @@ const formSchema = toTypedSchema(
 const { handleSubmit, meta, setFieldValue } = useForm({
   validationSchema: formSchema,
   initialValues: {
-    submission_url: props.task.submission_url || '',
+    submission_url: props.task?.submission_url || '',
   },
 })
 
@@ -86,8 +86,8 @@ watch(
 )
 
 onMounted(() => {
-  if (props.task.submission_url !== '') {
-    setFieldValue('submission_url', props.task.submission_url)
+  if (props.task !== null) {
+    setFieldValue('submission_url', props.task?.submission_url)
   }
 })
 </script>
@@ -135,7 +135,7 @@ onMounted(() => {
                 <Input
                   type="url"
                   placeholder="https://drive.google.com/file/d/..."
-                  :readonly="task.status !== 'rejected'"
+                  :readonly="task?.status !== 'rejected' && task !== null"
                   v-bind="componentField"
                 />
               </FormControl>
@@ -144,7 +144,7 @@ onMounted(() => {
           </FormField>
 
           <Button
-            v-if="task.status === 'rejected'"
+            v-if="task?.status === 'rejected' || task === null"
             type="submit"
             size="icon"
             :disabled="!meta.valid || isLoading"
@@ -153,11 +153,11 @@ onMounted(() => {
             <Send v-else class="size-4" />
           </Button>
           <Button
-            v-if="task.status === 'pending'"
+            v-if="task?.status === 'pending'"
             type="button"
             size="icon"
             variant="outline"
-            @click="copy(task.submission_url)"
+            @click="copy(task?.submission_url)"
           >
             <Copy class="size-4" />
           </Button>

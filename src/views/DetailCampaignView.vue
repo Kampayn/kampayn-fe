@@ -7,6 +7,7 @@ import {
   CheckCircle,
   NotebookPen,
   ReceiptText,
+  SquareArrowOutUpRight,
   XCircle,
 } from 'lucide-vue-next'
 import { useCampaignStore } from '@/stores/campaign'
@@ -199,7 +200,10 @@ onMounted(async () => {
               <p>Rp. {{ currentCampaign?.budget }}</p>
             </div>
             <div v-if="currentCampaign?.brandUser" class="col-span-2 md:col-auto space-y-1">
-              <div class="flex items-center gap-3 border px-4 py-2 w-full rounded-lg">
+              <RouterLink
+                :to="`/profile/${currentCampaign?.brandUser?.id}`"
+                class="flex items-center gap-3 border px-4 py-2 w-full rounded-lg group hover:border-primary hover:bg-green-100"
+              >
                 <Avatar class="size-8">
                   <AvatarImage src="https://github.com/unovue.png" alt="@unovue" />
                   <AvatarFallback>CN</AvatarFallback>
@@ -212,7 +216,9 @@ onMounted(async () => {
                     {{ currentCampaign?.brandUser?.brandProfile.category }}
                   </span>
                 </div>
-              </div>
+
+                <SquareArrowOutUpRight class="hidden group-hover:block ml-auto size-4 text-primary" />
+              </RouterLink>
             </div>
           </div>
         </div>
@@ -367,10 +373,8 @@ onMounted(async () => {
 
     <KAnalysis v-if="isCalculated && isFormValid" :roiValue="roiValue" :cacValue="cacValue" />
 
-    <!-- <KApplyCard v-if="user.role === 'influencer'" /> -->
-
     <KAssigment
-      v-if="user.role === 'influencer' && currentCampaign?.my_task"
+      v-if="user.role === 'influencer' && currentCampaign?.my_application.status === 'accepted'"
       :task="currentCampaign.my_task"
       :campaign-id="campaignId"
     />
