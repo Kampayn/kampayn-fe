@@ -10,7 +10,6 @@ import { Label } from '@/components/ui/label'
 import {
   MessageCircle,
   MapPin,
-  Star,
   Heart,
   TrendingUp,
   Instagram,
@@ -65,7 +64,7 @@ const handleChatClick = async () => {
     console.error('No other user profile available')
     return
   }
-  
+
   await createOrNavigateToChat(otherProfile.value.id)
 }
 
@@ -73,11 +72,6 @@ const handleSaveBankAccount = () => {
   isEditingBank.value = false
   // In a real app, this would save to the database
   alert('Bank account information saved!')
-}
-
-// Helper function to format large numbers
-const formatNumber = (num: string) => {
-  return 10
 }
 
 onMounted(() => {
@@ -151,19 +145,9 @@ onMounted(() => {
       <Card>
         <CardContent class="p-4 text-center">
           <div class="flex items-center justify-center mb-2">
-            <Star :size="20" class="text-yellow-500 mr-1" />
-            <span class="text-2xl font-bold">4.8</span>
-          </div>
-          <p class="text-sm text-gray-600">Rating</p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent class="p-4 text-center">
-          <div class="flex items-center justify-center mb-2">
             <Instagram :size="20" class="text-pink-500 mr-1" />
             <span class="text-2xl font-bold">
-              {{ formatNumber(influencerProfile?.instagram_followers || '') }}
+              {{ influencerProfile?.instagram_followers }}
             </span>
           </div>
           <p class="text-sm text-gray-600">Instagram Followers</p>
@@ -175,10 +159,20 @@ onMounted(() => {
           <div class="flex items-center justify-center mb-2">
             <Heart :size="20" class="text-red-500 mr-1" />
             <span class="text-2xl font-bold">
-              {{ formatNumber(influencerProfile?.instagram_avg_likes || '') }}
+              {{ influencerProfile?.instagram_avg_likes }}
             </span>
           </div>
           <p class="text-sm text-gray-600">Avg Likes</p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent class="p-4 text-center">
+          <div class="flex items-center justify-center mb-2">
+            <MessageCircle :size="20" class="text-yellow-500 mr-1" />
+            <span class="text-2xl font-bold">{{ influencerProfile?.instagram_avg_comments }}</span>
+          </div>
+          <p class="text-sm text-gray-600">Avg Comments</p>
         </CardContent>
       </Card>
 
