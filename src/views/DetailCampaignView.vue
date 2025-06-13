@@ -223,7 +223,9 @@ onMounted(async () => {
                   </span>
                 </div>
 
-                <SquareArrowOutUpRight class="hidden group-hover:block ml-auto size-4 text-primary" />
+                <SquareArrowOutUpRight
+                  class="hidden group-hover:block ml-auto size-4 text-primary"
+                />
               </RouterLink>
             </div>
           </div>
@@ -294,14 +296,7 @@ onMounted(async () => {
     <KReviewTask v-if="user.role === 'brand'" :campaignId />
 
     <!-- Campaign Analysis Form -->
-    <Card
-      class="mb-8"
-      v-if="
-        user.role === 'brand' &&
-        currentCampaign?.end_date &&
-        currentCampaign.end_date <= dayjs().format('YYYY-MM-DD')
-      "
-    >
+    <Card class="mb-8" v-if="user.role === 'brand'">
       <CardHeader>
         <CardTitle class="flex items-center gap-2">
           <Calculator class="h-5 w-5" />
