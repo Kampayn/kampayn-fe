@@ -201,7 +201,19 @@ export const useUserStore = defineStore('user', () => {
   const completeProfile = async (params: UserRoleParams): Promise<boolean> => {
     isLoading.value = true
     try {
-      const result = await userService.completeProfile(params)
+      const influencerResult = await userService.getInfluencerData(params.instagram_username || '')
+      if (!influencerResult.success) {
+        toast.error(influencerResult.error)
+        return false
+      }
+
+      const result = await userService.completeProfile({
+        ...params,
+        instagram_followers: influencerResult.data.followers.toString(),
+        instagram_avg_likes: influencerResult.data.average_likes.toString(),
+        instagram_avg_comments: influencerResult.data.average_comments.toString(),
+        instagram_engagement_rate: influencerResult.data.engagement_rate.toString(),
+      })
       if (!result.success) {
         toast.error(result.error)
         return false

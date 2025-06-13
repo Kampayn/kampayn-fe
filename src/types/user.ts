@@ -54,3 +54,13 @@ export interface UserResponse {
     user: User
   }
 }
+
+export interface InfluencerResponse {
+  followers: number
+  engagement_rate: number
+  average_likes: number
+  average_comments: number
+  is_professional_account: boolean
+  is_verified: boolean
+  category: string
+}
