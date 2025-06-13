@@ -9,6 +9,7 @@ import CreateCampaignView from '@/views/CreateCampaignView.vue'
 import InfluencerRecommendation from '@/views/InfluencerRecommendation.vue'
 import TaskListInfluencer from '@/views/TaskListInfluencerView.vue'
 import EditCampaignView from '@/views/EditCampaignView.vue'
+import { logPageView } from '@/utils/analytics'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -121,6 +122,14 @@ router.beforeEach((to, from, next) => {
   } else {
     next()
   }
+})
+
+// Log page views to Firebase Analytics after navigation is complete
+router.afterEach((to) => {
+  // Get the page title from the route meta or use the route name
+  const pageTitle = (to.meta.title as string) || (to.name as string) || 'Unknown Page'
+  // Log the page view with the page title and path
+  logPageView(pageTitle, to.fullPath)
 })
 
 export default router

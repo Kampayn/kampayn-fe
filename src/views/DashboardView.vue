@@ -2,6 +2,8 @@
 import { onMounted, ref, watch } from 'vue'
 import { Plus, Search } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
+import { useSeoMeta } from '@unhead/vue'
+import { toast } from 'vue-sonner'
 
 import { useUserStore } from '@/stores/user'
 import { useCampaignStore } from '@/stores/campaign'
@@ -13,7 +15,6 @@ import KBrandCard from '@/components/KBrandCard.vue'
 import KCampaignCard from '@/components/KCampaignCard.vue'
 import KAppliedCampaignCard from '@/components/KAppliedCampaignCard.vue'
 import { useApplicationStore } from '@/stores/application'
-import { toast } from 'vue-sonner'
 
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
@@ -62,6 +63,11 @@ watch(
     if (role === 'influencer') applicationStore.get()
   },
 )
+
+useSeoMeta({
+  title: 'Dashboard',
+  description: 'Dashboard Kampayn',
+})
 
 onMounted(() => {
   campaignStore.get(user.value.role === 'brand')

@@ -25,6 +25,12 @@ import KHeader from '@/components/KHeader.vue'
 import dayjs from 'dayjs'
 import { useRoute } from 'vue-router'
 import { useChatNavigation } from '@/composables/useChat'
+import { useSeoMeta } from '@unhead/vue'
+
+useSeoMeta({
+  title: 'Profile',
+  description: 'View user profile on Kampayn',
+})
 
 const route = useRoute()
 const userStore = useUserStore()

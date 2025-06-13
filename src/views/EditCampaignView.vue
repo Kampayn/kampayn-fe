@@ -45,6 +45,12 @@ import { Badge } from '@/components/ui/badge'
 import { useCampaignStore } from '@/stores/campaign'
 import { storeToRefs } from 'pinia'
 import { toast } from 'vue-sonner'
+import { useSeoMeta } from '@unhead/vue'
+
+useSeoMeta({
+  title: 'Edit Campaign',
+  description: 'Edit an existing influencer marketing campaign on Kampayn',
+})
 
 const route = useRoute()
 const router = useRouter()

@@ -10,6 +10,12 @@ import { useChat } from '@/composables/useChat'
 import type { ChatRoom } from '@/types/chat'
 import KChatRoomList from '@/components/KChatRoomList.vue'
 import KChatInterface from '@/components/KChatInterface.vue'
+import { useSeoMeta } from '@unhead/vue'
+
+useSeoMeta({
+  title: 'Chat',
+  description: 'Chat with other users on Kampayn',
+})
 
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)

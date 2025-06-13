@@ -2,6 +2,12 @@
 import KHeader from '@/components/KHeader.vue'
 import KFooter from '@/components/KFooter.vue'
 import { Button } from '@/components/ui/button';
+import { useSeoMeta } from '@unhead/vue'
+
+useSeoMeta({
+  title: 'About Us',
+  description: 'Learn more about Kampayn and our mission.',
+})
 </script>
 
 <template>

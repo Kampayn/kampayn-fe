@@ -29,6 +29,12 @@ import KReviewTask from '@/components/KReviewTask.vue'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getCampaignTypeLabel, getPaymentMethodLabel, getPlatformIcon } from '@/utils/enumHelper'
 import KApplication from '@/components/KApplication.vue'
+import { useSeoMeta } from '@unhead/vue'
+
+useSeoMeta({
+  title: 'Campaign Details',
+  description: 'View details of an influencer marketing campaign on Kampayn',
+})
 
 const router = useRouter()
 const route = useRoute()

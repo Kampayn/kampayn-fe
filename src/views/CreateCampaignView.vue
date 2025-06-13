@@ -6,6 +6,10 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { DateFormatter, getLocalTimeZone, today } from '@internationalized/date'
 import { CalendarDays, Loader2 } from 'lucide-vue-next'
 import type { DateRange } from 'reka-ui'
+import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
+import { toast } from 'vue-sonner'
+import { useSeoMeta } from '@unhead/vue'
 
 import KHeader from '@/components/KHeader.vue'
 import KFooter from '@/components/KFooter.vue'
@@ -42,9 +46,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { useCampaignStore } from '@/stores/campaign'
-import { storeToRefs } from 'pinia'
-import { useRouter } from 'vue-router'
-import { toast } from 'vue-sonner'
+
+useSeoMeta({
+  title: 'Create Campaign',
+  description: 'Create a new influencer marketing campaign on Kampayn',
+})
 
 const router = useRouter()
 

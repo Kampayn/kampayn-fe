@@ -21,6 +21,12 @@ import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/f
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import KHeader from '@/components/KHeader.vue'
+import { useSeoMeta } from '@unhead/vue'
+
+useSeoMeta({
+  title: 'Register',
+  description: 'Register for a new Kampayn account',
+})
 
 const googleAuthProvider = new GoogleAuthProvider()
 
