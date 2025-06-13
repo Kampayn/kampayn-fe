@@ -278,30 +278,6 @@ onMounted(async () => {
             </div>
           </div>
         </div>
-        <!-- <div v-for="(section, index) in briefSections" :key="index">
-          <h3 class="font-semibold text-gray-900 mb-3">{{ section.title }}</h3>
-
-          <div v-if="Array.isArray(section.content)" class="space-y-2">
-            <ul
-              v-if="section.title === 'Key Message'"
-              class="list-disc list-inside text-gray-700 space-y-1"
-            >
-              <li v-for="(item, idx) in section.content" :key="idx">{{ item }}</li>
-            </ul>
-            <div v-else class="space-y-3">
-              <p
-                v-for="(item, idx) in section.content"
-                :key="idx"
-                class="text-gray-700 leading-relaxed"
-              >
-                {{ item }}
-              </p>
-            </div>
-          </div>
-          <p v-else class="text-gray-700 leading-relaxed">{{ section.content }}</p>
-
-          <Separator v-if="index < briefSections.length - 1" class="mt-6" />
-        </div> -->
       </CardContent>
     </Card>
 

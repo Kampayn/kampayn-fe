@@ -93,11 +93,11 @@ onMounted(async () => {
             >
               <td class="py-4 px-4 text-sm">{{ index + 1 }}</td>
               <td class="py-4 px-4">
-                <div class="flex items-center gap-3">
+                <RouterLink :to="`/profile/${row.influencer?.id}`" class="flex items-center gap-3">
                   <div
                     class="h-10 w-10 rounded-full bg-gradient-to-br from-green-500 to-blue-500 flex items-center justify-center text-white text-xs font-medium"
                   >
-                  {{
+                    {{
                       row.influencer?.name
                         .split(' ')
                         .map((n) => n[0])
@@ -105,7 +105,7 @@ onMounted(async () => {
                     }}
                   </div>
                   <span class="font-medium text-gray-900">{{ row.influencer?.name }}</span>
-                </div>
+                </RouterLink>
               </td>
               <td class="py-4 px-4">
                 <span v-for="ctg in row.influencer?.influencerProfile?.categories" :key="ctg">
@@ -146,17 +146,20 @@ onMounted(async () => {
               </td>
             </tr>
           </tbody>
-
         </table>
-        
+
         <!-- Empty State -->
-        <div v-if="pendingCount === 0" class="flex flex-col items-center justify-center py-12 text-center">
+        <div
+          v-if="pendingCount === 0"
+          class="flex flex-col items-center justify-center py-12 text-center"
+        >
           <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
             <Users class="h-8 w-8 text-gray-400" />
           </div>
           <h3 class="text-lg font-medium text-gray-900 mb-2">No Applications Yet</h3>
           <p class="text-gray-500 mb-4 max-w-sm">
-            There are no pending applications for this campaign. Applications will appear here when influencers apply.
+            There are no pending applications for this campaign. Applications will appear here when
+            influencers apply.
           </p>
         </div>
       </div>
