@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import type { ChatRoom } from '@/types/chat'
 import { onMounted, ref } from 'vue'
 import type { User } from '@/types/user'
+import { storeToRefs } from 'pinia'
 
 interface Props {
   chatRoom: ChatRoom
@@ -13,12 +14,12 @@ interface Props {
 const props = defineProps<Props>()
 
 const userStore = useUserStore()
-// const { user } = storeToRefs(userStore)
+const { user } = storeToRefs(userStore)
 
 const userProfile = ref<User | null>(null)
 
 const receiver = (members: string[]) => {
-  return members.find((member) => member !== userStore.user?.id)
+  return members.find((member) => member !== user?.value.id)
 }
 
 onMounted(async () => {
@@ -43,7 +44,6 @@ onMounted(async () => {
       //   selectedChatRoom?.id === chatRoom.id && 'bg-gray-100',
     ]"
   >
-    <!-- @click="handleChatRoomSelect(chatRoom)" -->
     <Avatar>
       <AvatarImage
         :src="userProfile?.name || '/placeholder.svg?height=40&width=40'"
