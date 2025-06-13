@@ -55,7 +55,7 @@ const username = computed(() => {
   if (userData.value?.role === 'brand') {
     return userData.value.name
   }
-  return `@${userData.value?.name}`
+  return `@${influencerProfile.value?.instagram_username}`
 })
 
 // Event Handlers
@@ -224,6 +224,10 @@ onMounted(() => {
             <div class="space-y-4">
               <h3 class="text-lg font-semibold text-gray-900">Contact Information</h3>
               <div class="space-y-3">
+                <div v-if="userData?.role === 'influencer'">
+                  <p class="text-sm text-gray-600">Name</p>
+                  <p class="font-medium">{{ userData?.name }}</p>
+                </div>
                 <div>
                   <p class="text-sm text-gray-600">Email</p>
                   <p class="font-medium">{{ userData?.email }}</p>
