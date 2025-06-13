@@ -234,7 +234,7 @@ onMounted(async () => {
     <Separator class="my-8" />
 
     <!-- Brief Section -->
-    <Card v-if="user.role === 'brand'" class="mb-8 grid-cols-3">
+    <Card class="mb-8 grid-cols-3">
       <CardHeader>
         <CardTitle class="flex items-center gap-2 text-lg">
           <ReceiptText class="text-gray-500" />
