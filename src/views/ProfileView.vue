@@ -23,11 +23,12 @@ import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import KHeader from '@/components/KHeader.vue'
 import dayjs from 'dayjs'
-import { useRoute } from 'vue-router'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 
 const userStore = useUserStore()
 const { user, otherProfile } = storeToRefs(userStore)
@@ -55,7 +56,7 @@ const username = computed(() => {
 })
 
 // Event Handlers
-const handleChatClick = async() => {
+const handleChatClick = async () => {
   const chatRoomId =
     user.value?.id > otherProfile.value!.id
       ? `${user.value?.id}_${otherProfile.value?.id}`
@@ -63,16 +64,22 @@ const handleChatClick = async() => {
 
   console.log(chatRoomId)
 
-  const chatRoomRef = doc(db, 'chatRooms', chatRoomId)
-  const chatRoomSnap = await getDoc(chatRoomRef)
+  try {
+    const chatRoomRef = doc(db, 'chatRooms', chatRoomId)
+    const chatRoomSnap = await getDoc(chatRoomRef)
 
-  // If chat room doesn't exist, create it
-  if (!chatRoomSnap.exists()) {
-    await setDoc(chatRoomRef, {
-      members: [user.value?.id, otherProfile.value?.id],
-      createdAt: dayjs().unix(),
-      updatedAt: dayjs().unix(),
-    })
+    // If chat room doesn't exist, create it
+    if (!chatRoomSnap.exists()) {
+      await setDoc(chatRoomRef, {
+        members: [user.value?.id, otherProfile.value?.id],
+        createdAt: dayjs().unix(),
+        updatedAt: dayjs().unix(),
+      })
+    }
+
+    router.push('/chat')
+  } catch (error) {
+    console.error('Error creating chat room:', error)
   }
 }
 

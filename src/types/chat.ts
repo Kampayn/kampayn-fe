@@ -30,7 +30,7 @@ export interface ChatMessage {
   chatRoomId: string
   senderId: string
   senderName: string
-  text: string
+  content: string
   timestamp: string
   type: 'text' | 'image' | 'file'
   readBy: string[] // Array of user IDs who have read this message

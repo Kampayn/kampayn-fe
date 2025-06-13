@@ -31,7 +31,7 @@ const links = [
   },
   {
     label: 'Chats',
-    href: '/chats',
+    href: '/chat',
     icon: MessageCircle,
   },
   {

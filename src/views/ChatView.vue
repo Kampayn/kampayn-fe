@@ -10,7 +10,7 @@ import KHeader from '@/components/KHeader.vue'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import { useChat, useChatMessages } from '@/composables/useChat'
-import type { ChatRoom, ChatMessage } from '@/types/chat'
+import type { ChatRoom } from '@/types/chat'
 import KChatRoomList from '@/components/KChatRoomList.vue'
 
 const userStore = useUserStore()
@@ -213,7 +213,7 @@ onMounted(() => {
                 cn(
                   'max-w-[70%] rounded-lg p-3',
                   message.senderId === userStore.user?.id
-                    ? 'bg-blue-600 text-white rounded-br-none'
+                    ? 'bg-primary text-white rounded-br-none'
                     : 'bg-gray-100 text-gray-900 rounded-bl-none',
                 )
               "
